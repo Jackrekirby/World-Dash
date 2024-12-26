@@ -9,11 +9,11 @@ export interface Renderer {
     wz: number // must specify world z
   }) => Pos3D
   ClearCanvas: () => void
-  DrawIsometricTile: (tile: Tile) => void
+  DrawIsometricTile: (tile: RenderTile) => void
   DrawIsometricGrid: () => void
 }
 
-export interface Tile {
+export interface RenderTile {
   worldPosition: Pos3D
   tileIndex: Pos2D
   tileset: TileSet

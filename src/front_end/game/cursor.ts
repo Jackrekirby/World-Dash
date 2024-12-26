@@ -1,9 +1,7 @@
+import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { Renderer } from '../renderer/types'
-import { TileData } from '../world/main'
+import { WorldTile } from '../world/main'
 import { World } from '../world/types'
-import { Pos2D, Pos3D } from './types'
-
-// a file for functions that require the renderer and world
 
 export const CalculateCursorWorldPosition = (
   renderer: Renderer,
@@ -21,7 +19,7 @@ export const CalculateCursorWorldPosition = (
       z: Math.round(fw.z)
     }
 
-    const tile: TileData | undefined = world.GetTile(w)
+    const tile: WorldTile | undefined = world.GetTile(w)
 
     if (tile !== undefined) {
       return w

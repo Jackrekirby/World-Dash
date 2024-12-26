@@ -1,7 +1,6 @@
 import { elements } from '../dom/elements'
-import { TileData } from '../world/main'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
-import { Renderer, Tile, TileSet } from './types'
+import { Renderer, RenderTile, TileSet } from './types'
 
 export const LoadImage = async (src: string): Promise<HTMLImageElement> => {
   const image = new Image()
@@ -106,7 +105,7 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     return p
   }
 
-  const DrawIsometricTile = (tile: Tile) => {
+  const DrawIsometricTile = (tile: RenderTile) => {
     //  /  \
     // x    y
     // w = world x, y & z

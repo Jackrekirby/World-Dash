@@ -1,5 +1,5 @@
-import { Pos3D } from '../miscellaneous/types'
-import { TileData } from './main'
+import { Pos2D, Pos3D } from '../miscellaneous/types'
+import { WorldTile } from './main'
 
 export enum TileType {
   dirt = 'dirt',
@@ -20,8 +20,8 @@ export enum TileType {
 export interface World {
   SetCursorWorldPosition: (cursorWorldPosition: Pos3D | null) => void
   GetCursorWorldPosition: () => Pos3D | null
-  GetTile: (position: Pos3D) => TileData | undefined
-  GetTiles: () => TileData[]
+  GetTile: (position: Pos3D) => WorldTile | undefined
+  GetTiles: () => WorldTile[]
   GenerateTiles: ({
     landAxialRadius,
     worldAxialRadius
@@ -29,4 +29,5 @@ export interface World {
     landAxialRadius?: number
     worldAxialRadius?: number
   }) => void
+  GetSurfaceTile: (position: Pos2D) => WorldTile | undefined
 }

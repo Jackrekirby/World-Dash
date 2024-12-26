@@ -1,4 +1,4 @@
-import { Renderer, Tile, TileSet } from '../renderer/types'
+import { Renderer, RenderTile, TileSet } from '../renderer/types'
 import { World } from '../world/types'
 import { Game } from './types'
 
@@ -6,7 +6,7 @@ export const Render = (
   time: DOMHighResTimeStamp,
   renderer: Renderer,
   world: World,
-  tiles: Tile[],
+  tiles: RenderTile[],
   game: Game
 ): void => {
   renderer.ClearCanvas()
@@ -28,7 +28,7 @@ export const Render = (
 
   // draw player
   renderer.DrawIsometricTile({
-    worldPosition: { x: 0, y: 0, z: 1 },
+    worldPosition: game.playerPosition,
     tileIndex: { x: time % 1000 < 500 ? 0 : 1, y: 0 },
     tileset: TileSet.entities
   })

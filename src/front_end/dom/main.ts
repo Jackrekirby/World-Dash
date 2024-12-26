@@ -1,6 +1,6 @@
+import { CalculateCursorWorldPosition } from '../game/cursor'
 import { Game } from '../game/types'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
-import { CalculateCursorWorldPosition } from '../miscellaneous/world_renderer'
 import { Renderer } from '../renderer/types'
 import { World } from '../world/types'
 import { CyclicButtonManager } from './cyclicButtonManager'

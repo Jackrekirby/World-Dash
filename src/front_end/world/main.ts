@@ -2,14 +2,14 @@ import { CreatePerlinNoise } from '../miscellaneous/perlin_noise'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { TileType, World } from './types'
 
-export interface TileData {
+export interface WorldTile {
   p: Pos3D
   tileType: TileType
 }
 
 export const CreateWorld = (): World => {
   let _cursorWorldPosition: Pos3D | null = null
-  let _tiles: TileData[] = []
+  let _tiles: WorldTile[] = []
 
   const SetCursorWorldPosition = (cursorWorldPosition: Pos3D | null): void => {
     _cursorWorldPosition = null
@@ -19,8 +19,8 @@ export const CreateWorld = (): World => {
     return _cursorWorldPosition
   }
 
-  const GetTile = (position: Pos3D): TileData | undefined => {
-    const tile: TileData | undefined = _tiles.find(
+  const GetTile = (position: Pos3D): WorldTile | undefined => {
+    const tile: WorldTile | undefined = _tiles.find(
       tile =>
         tile.p.x === position.x &&
         tile.p.y === position.y &&
@@ -28,6 +28,21 @@ export const CreateWorld = (): World => {
     )
     return tile
   }
+
+  const GetSurfaceTile = (position: Pos2D): WorldTile | undefined => {
+    for (let z = 4; z >= 0; z--) {
+      const tile: WorldTile | undefined = _tiles.find(
+        tile =>
+          tile.p.x === position.x && tile.p.y === position.y && tile.p.z === z
+      )
+      if (tile !== undefined) {
+        return tile
+      }
+    }
+
+    return undefined
+  }
+
   const GetTiles = () => {
     return _tiles
   }
@@ -39,6 +54,7 @@ export const CreateWorld = (): World => {
     landAxialRadius?: number
     worldAxialRadius?: number
   } = {}): void => {
+    let tiles: WorldTile[] = []
     const perlin1 = CreatePerlinNoise()
     const perlin2 = CreatePerlinNoise()
 
@@ -98,13 +114,13 @@ export const CreateWorld = (): World => {
         wz = 2
       }
       for (let zz = 0; zz <= wz; zz++) {
-        _tiles.push({ p: { x: p.x, y: p.y, z: zz }, tileType })
+        tiles.push({ p: { x: p.x, y: p.y, z: zz }, tileType })
       }
 
       const AddDecorativeTile = (tileType: TileType, z: number = 1) => {
-        _tiles.push({
+        tiles.push({
           p: { x: p.x, y: p.y, z: wz + z },
-          tileType: TileType.plant
+          tileType
         })
       }
 
@@ -114,7 +130,7 @@ export const CreateWorld = (): World => {
           AddDecorativeTile(TileType.plant)
         } else if (r < 0.15) {
           AddDecorativeTile(TileType.log)
-          AddDecorativeTile(TileType.canopy, 1)
+          AddDecorativeTile(TileType.canopy, 2)
         } else if (r < 0.2) {
           AddDecorativeTile(TileType.smallStones)
         }
@@ -124,6 +140,48 @@ export const CreateWorld = (): World => {
         AddDecorativeTile(TileType.largeStones)
       }
     }
+
+    _tiles = tiles
+
+    const allowedLavaNeighbours = [TileType.stone, TileType.lava]
+
+    // only allow lava tiles which are surrounded by stone
+    for (let tile of _tiles) {
+      if (tile.tileType === TileType.lava) {
+        const neighbours: { p: Pos3D; tileTypes: (TileType | undefined)[] }[] =
+          [
+            { p: { x: 0, y: 0, z: 1 }, tileTypes: [undefined] },
+            {
+              p: { x: 1, y: 0, z: 0 },
+              tileTypes: allowedLavaNeighbours
+            },
+            {
+              p: { x: 0, y: 1, z: 0 },
+              tileTypes: allowedLavaNeighbours
+            },
+            {
+              p: { x: -1, y: 0, z: 0 },
+              tileTypes: allowedLavaNeighbours
+            },
+            {
+              p: { x: 0, y: -1, z: 0 },
+              tileTypes: allowedLavaNeighbours
+            }
+          ]
+        for (let neighbour of neighbours) {
+          const other: WorldTile | undefined = GetTile({
+            x: tile.p.x + neighbour.p.x,
+            y: tile.p.y + neighbour.p.y,
+            z: tile.p.z + neighbour.p.z
+          })
+
+          if (!neighbour.tileTypes.includes(other?.tileType)) {
+            tile.tileType = TileType.stone
+            break
+          }
+        }
+      }
+    }
   }
 
   return {
@@ -131,6 +189,7 @@ export const CreateWorld = (): World => {
     GetCursorWorldPosition,
     GetTile,
     GetTiles,
-    GenerateTiles
+    GenerateTiles,
+    GetSurfaceTile
   }
 }
