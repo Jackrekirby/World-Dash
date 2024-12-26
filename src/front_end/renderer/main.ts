@@ -25,9 +25,14 @@ export const CreateRenderer = async (): Promise<Renderer> => {
 
   ctx.imageSmoothingEnabled = false
 
-  const scale = 4
+  const SetScale = (scale: number): void => {
+    _scale = scale
+    _dts = sts * _scale
+  }
+
+  let _scale = 4
   const sts = 16 // source tile size
-  const dts = sts * scale // destination tile size
+  let _dts = sts * _scale // destination tile size
   const heightOverflow = 1 // pixel
 
   const tileSets: Map<TileSet, HTMLImageElement> = new Map([
@@ -58,28 +63,28 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     ctx.lineWidth = 1
 
     ctx.strokeStyle = 'hsla(0, 0%, 50%, 0.5)'
-    for (let x = 0; x < width; x += dts) {
+    for (let x = 0; x < width; x += _dts) {
       DrawLine(x, 0, x, height)
     }
-    for (let y = 0; y < height; y += dts) {
+    for (let y = 0; y < height; y += _dts) {
       DrawLine(0, y, width, y)
     }
 
     ctx.strokeStyle = 'hsl(0, 0%, 100%, 0.5)'
-    for (let x = dts / 2; x < width; x += dts) {
+    for (let x = _dts / 2; x < width; x += _dts) {
       DrawLine(x, 0, x, height)
     }
-    for (let y = dts / 2; y < height; y += dts) {
+    for (let y = _dts / 2; y < height; y += _dts) {
       DrawLine(0, y, width, y)
     }
 
-    for (let y = -dts; y < height; y += dts) {
-      for (let x = -dts; x < width; x += dts) {
+    for (let y = -_dts; y < height; y += _dts) {
+      for (let x = -_dts; x < width; x += _dts) {
         ctx.strokeStyle = 'hsla(200, 100%, 80%, 0.5)'
-        DrawLine(x, y, x + 2 * dts, y + dts)
+        DrawLine(x, y, x + 2 * _dts, y + _dts)
 
         ctx.strokeStyle = 'hsla(100, 100%, 80%, 0.5)'
-        DrawLine(x, y + dts, x + 2 * dts, y)
+        DrawLine(x, y + _dts, x + 2 * _dts, y)
       }
     }
   }
@@ -95,12 +100,12 @@ export const CreateRenderer = async (): Promise<Renderer> => {
   }): { x: number; y: number } => {
     const p0 = {
       // destination x & y origin (centre)
-      x: (width - dts) / 2,
-      y: (height - dts) / 2 - heightOverflow * scale
+      x: (width - _dts) / 2,
+      y: (height - _dts) / 2 - heightOverflow * _scale
     }
     const p = {
-      x: p0.x - (x * dts) / 2 + (y * dts) / 2,
-      y: p0.y + (x * dts) / 4 + (y * dts) / 4 - (z * dts) / 2
+      x: p0.x - (x * _dts) / 2 + (y * _dts) / 2,
+      y: p0.y + (x * _dts) / 4 + (y * _dts) / 4 - (z * _dts) / 2
     }
     return p
   }
@@ -113,21 +118,23 @@ export const CreateRenderer = async (): Promise<Renderer> => {
 
     const [sw, sh] = [sts, sts + heightOverflow] // source width & height (+1 = tile overflow)
     const [sx, sy] = [tile.tileIndex.x * sw, tile.tileIndex.y * sh] // source x & y
-    const [dw, dh] = [sw * scale, sh * scale] // destination width & height
+    const [dw, dh] = [sw * _scale, sh * _scale] // destination width & height
 
     const [dx0, dy0] = [
       // destination x & y origin (centre)
-      (width - dts) / 2,
-      (height - dts) / 2 - heightOverflow * scale
+      (width - _dts) / 2,
+      (height - _dts) / 2 - heightOverflow * _scale
     ]
 
     const [dx, dy] = [
       // destination x & y
-      dx0 - (tile.worldPosition.x * dts) / 2 + (tile.worldPosition.y * dts) / 2,
+      dx0 -
+        (tile.worldPosition.x * _dts) / 2 +
+        (tile.worldPosition.y * _dts) / 2,
       dy0 +
-        (tile.worldPosition.x * dts) / 4 +
-        (tile.worldPosition.y * dts) / 4 -
-        (tile.worldPosition.z * dts) / 2
+        (tile.worldPosition.x * _dts) / 4 +
+        (tile.worldPosition.y * _dts) / 4 -
+        (tile.worldPosition.z * _dts) / 2
     ]
 
     const d = WorldToCanvasPosition(tile.worldPosition)
@@ -160,17 +167,17 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     // x = - 1/dts * (_x - p0.x) + 2/dts * (_y - p0.y) + z
     // x = 1/dts * (p0.x - _x + 2 * (_y - p0.y)) + z
 
-    const cx = canvasPosition.x - dts / 2
-    const cy = canvasPosition.y - dts / 2
+    const cx = canvasPosition.x - _dts / 2
+    const cy = canvasPosition.y - _dts / 2
 
     const p0 = {
       // destination x & y origin (centre)
-      x: (width - dts) / 2,
-      y: (height - dts) / 2 - heightOverflow * scale
+      x: (width - _dts) / 2,
+      y: (height - _dts) / 2 - heightOverflow * _scale
     }
     const p = {
-      x: (1 / dts) * (p0.x - cx + 2 * (cy - p0.y)) + wz + 0.5,
-      y: (1 / dts) * (cx - p0.x + 2 * (cy - p0.y)) + wz + 0.5,
+      x: (1 / _dts) * (p0.x - cx + 2 * (cy - p0.y)) + wz + 0.5,
+      y: (1 / _dts) * (cx - p0.x + 2 * (cy - p0.y)) + wz + 0.5,
       z: wz
     }
 
@@ -185,6 +192,7 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     CanvasToWorldPosition,
     ClearCanvas,
     DrawIsometricTile,
-    DrawIsometricGrid
+    DrawIsometricGrid,
+    SetScale
   }
 }

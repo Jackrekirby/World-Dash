@@ -27,9 +27,11 @@ Isometric Assets (Modified)
 14. Do not render blocks surrounded by opaque tiles
 15. Clip tiles outside world
 16. Camera
-17. Randomised tiles
+17. Randomised tile texture
 18. Connected textures
 19. Animated textures
+20. Tile metadata (grouped tiles, collision data, lighting normals, can walk through, is solid block)
+21. Procedural textures (e.g., for smoothing between tile types / rough edges)
 
 ### World Dash
 

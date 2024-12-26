@@ -126,16 +126,24 @@ export const CreateWorld = (): World => {
 
       const r = Math.random()
       if (tileType === TileType.grass) {
-        if (r < 0.1) {
-          AddDecorativeTile(TileType.plant)
+        if (r < 0.05) {
+          AddDecorativeTile(TileType.blueOrchid)
+        } else if (r < 0.1) {
+          AddDecorativeTile(TileType.rose)
         } else if (r < 0.15) {
           AddDecorativeTile(TileType.log)
           AddDecorativeTile(TileType.canopy, 2)
         } else if (r < 0.2) {
           AddDecorativeTile(TileType.smallStones)
         }
-      } else if (tileType === TileType.sand && r > 0.9) {
-        AddDecorativeTile(TileType.cactus)
+      } else if (tileType === TileType.dryGrass && r < 0.1) {
+        AddDecorativeTile(TileType.plant)
+      } else if (tileType === TileType.sand) {
+        if (r < 0.1) {
+          AddDecorativeTile(TileType.cactus)
+        } else if (r < 0.15) {
+          AddDecorativeTile(TileType.palmTree)
+        }
       } else if (tileType === TileType.stone && r > 0.95) {
         AddDecorativeTile(TileType.largeStones)
       }

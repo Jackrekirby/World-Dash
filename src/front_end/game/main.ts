@@ -29,26 +29,42 @@ export const Render = (
   renderer.ClearCanvas()
 
   // draw tiles
-  for (const t of tiles) {
-    renderer.DrawIsometricTile(t)
-  }
+  const rTiles: RenderTile[] = [...tiles]
 
-  // draw cusor
+  // draw cursor
   const cursorWorldPosition = world.GetCursorWorldPosition()
   if (cursorWorldPosition !== null) {
-    renderer.DrawIsometricTile({
+    const cursorTile: RenderTile = {
       worldPosition: cursorWorldPosition,
       tileIndex: { x: 0, y: 0 },
       tileset: TileSet.mapIndicators
-    })
-  }
+    }
 
+    rTiles.push(cursorTile)
+  }
   // draw player
-  renderer.DrawIsometricTile({
+  const playerTile: RenderTile = {
     worldPosition: game.playerPosition,
     tileIndex: { x: time % 1000 < 500 ? 0 : 1, y: 0 },
     tileset: TileSet.entities
+  }
+  rTiles.push(playerTile)
+
+  // sort tiles for render (move into renderer)
+  rTiles.sort((a, b) => {
+    const aw = a.worldPosition.x + a.worldPosition.y
+    const bw = b.worldPosition.x + b.worldPosition.y
+    if (aw === bw) {
+      // if tiles on same x,y, render from bottom to top
+      return a.worldPosition.z - b.worldPosition.z
+    }
+    // render from back to front (negative to positive x, y)
+    return aw - bw
   })
+
+  for (const t of rTiles) {
+    renderer.DrawIsometricTile(t)
+  }
 
   // draw grid
   if (game.showGrid) {

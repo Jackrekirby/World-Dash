@@ -27,7 +27,10 @@ const main = async () => {
 
   const RenderLoop = () => {
     requestAnimationFrame((time: DOMHighResTimeStamp) => {
-      const rTiles: RenderTile[] = GenerateRenderTiles(world.GetTiles())
+      const rTiles: RenderTile[] = GenerateRenderTiles({
+        worldTiles: world.GetTiles(),
+        time
+      })
       Render(time, renderer, world, rTiles, game)
       RenderLoop()
     })

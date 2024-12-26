@@ -3,7 +3,8 @@ import { Elements } from './types'
 const elementIds: (keyof Elements)[] = [
   'canvas',
   'toggleGrid',
-  'randomiseWorld'
+  'randomiseWorld',
+  'tileScale'
 ]
 
 const GetElements = (): Elements => {

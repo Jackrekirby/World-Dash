@@ -92,3 +92,21 @@ export const CreatePerlinNoise = (): PerlinNoise => {
     noise: layeredNoise
   }
 }
+
+export const NoiseManager = () => {
+  const noiseCollection: Map<string, PerlinNoise> = new Map([])
+
+  const GetNoise = (key: string): PerlinNoise => {
+    if (!noiseCollection.has(key)) {
+      noiseCollection.set(key, CreatePerlinNoise())
+    }
+    return noiseCollection.get(key) as PerlinNoise
+  }
+
+  return {
+    GetNoise
+  }
+}
+
+// singleton...
+export const NOISE_MANAGER = NoiseManager()

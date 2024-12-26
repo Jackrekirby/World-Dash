@@ -11,6 +11,7 @@ export interface Renderer {
   ClearCanvas: () => void
   DrawIsometricTile: (tile: RenderTile) => void
   DrawIsometricGrid: () => void
+  SetScale: (scale: number) => void
 }
 
 export interface RenderTile {

@@ -8,15 +8,26 @@ import { CyclicButtonManager } from './cyclicButtonManager'
 import { elements } from './elements'
 
 export const InitialiseDom = (world: World, renderer: Renderer, game: Game) => {
-  CyclicButtonManager(
-    ['Grid On', 'Grid Off'],
-    'Grid On',
-    'toggleGrid',
-    (value: string) => {
+  CyclicButtonManager({
+    values: ['Grid On', 'Grid Off'],
+    defaultValue: 'Grid On',
+    name: 'toggleGrid',
+    OnChangeCallback: (value: string) => {
       const showGrid = value === 'Grid On'
       game.showGrid = showGrid
     }
-  )
+  })
+
+  CyclicButtonManager({
+    values: [1, 2, 4, 8],
+    defaultValue: 4,
+    name: 'tileScale',
+    OnChangeCallback: (scale: number) => {
+      renderer.SetScale(scale)
+    },
+    ToString: String,
+    FromString: Number
+  })
 
   elements.canvas.addEventListener('mousemove', (event: MouseEvent) => {
     const canvasPosition: Pos2D = { x: event.offsetX, y: event.offsetY }

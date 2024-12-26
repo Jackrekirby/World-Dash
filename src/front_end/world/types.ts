@@ -14,7 +14,10 @@ export enum TileType {
   dryGrass = 'dryGrass',
   smallStones = 'smallStones',
   largeStones = 'largeStones',
-  lava = 'lava'
+  lava = 'lava',
+  blueOrchid = 'blueOrchid',
+  rose = 'rose',
+  palmTree = 'palmTree'
 }
 
 export interface World {
