@@ -27,6 +27,9 @@ Isometric Assets (Modified)
 14. Do not render blocks surrounded by opaque tiles
 15. Clip tiles outside world
 16. Camera
+17. Randomised tiles
+18. Connected textures
+19. Animated textures
 
 ### World Dash
 
