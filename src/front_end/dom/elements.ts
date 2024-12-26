@@ -1,6 +1,10 @@
 import { Elements } from './types'
 
-const elementIds: (keyof Elements)[] = ['canvas', 'toggleGrid']
+const elementIds: (keyof Elements)[] = [
+  'canvas',
+  'toggleGrid',
+  'randomiseWorld'
+]
 
 const GetElements = (): Elements => {
   const elements: { [key: string]: HTMLElement | null } = Object.fromEntries(

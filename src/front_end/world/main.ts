@@ -12,7 +12,7 @@ export const CreateWorld = (): World => {
   let _tiles: WorldTile[] = []
 
   const SetCursorWorldPosition = (cursorWorldPosition: Pos3D | null): void => {
-    _cursorWorldPosition = null
+    _cursorWorldPosition = cursorWorldPosition
   }
 
   const GetCursorWorldPosition = (): Pos3D | null => {

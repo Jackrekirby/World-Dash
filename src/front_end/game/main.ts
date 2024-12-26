@@ -1,6 +1,23 @@
+import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { Renderer, RenderTile, TileSet } from '../renderer/types'
-import { World } from '../world/types'
+import { WorldTile } from '../world/main'
+import { TileType, World } from '../world/types'
 import { Game } from './types'
+
+export const RandomisePlayerPosition = (world: World): Pos3D => {
+  for (let i = 0; i < 100; i++) {
+    const p: Pos2D = {
+      x: Math.floor(Math.random() * 6) - 3,
+      y: Math.floor(Math.random() * 6) - 3
+    }
+    const tile: WorldTile | undefined = world.GetSurfaceTile(p)
+    if (tile !== undefined && tile.tileType !== TileType.water) {
+      return { x: tile.p.x, y: tile.p.y, z: tile.p.z + 1 }
+    }
+  }
+  console.warn('Failed to find valid tile for player to stand on')
+  return { x: 0, y: 0, z: 0 }
+}
 
 export const Render = (
   time: DOMHighResTimeStamp,

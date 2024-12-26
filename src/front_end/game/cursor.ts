@@ -8,7 +8,7 @@ export const CalculateCursorWorldPosition = (
   world: World,
   canvasPosition: Pos2D
 ): Pos3D | null => {
-  for (let wz = 2; wz >= 0; wz--) {
+  for (let wz = 4; wz >= 0; wz--) {
     const fw: Pos3D = renderer.CanvasToWorldPosition({
       canvasPosition,
       wz

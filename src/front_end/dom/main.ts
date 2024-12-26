@@ -1,4 +1,5 @@
 import { CalculateCursorWorldPosition } from '../game/cursor'
+import { RandomisePlayerPosition } from '../game/main'
 import { Game } from '../game/types'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { Renderer } from '../renderer/types'
@@ -26,4 +27,9 @@ export const InitialiseDom = (world: World, renderer: Renderer, game: Game) => {
     )
     world.SetCursorWorldPosition(worldPosition)
   })
+
+  elements.randomiseWorld.onclick = () => {
+    world.GenerateTiles({ landAxialRadius: 6, worldAxialRadius: 12 })
+    game.playerPosition = RandomisePlayerPosition(world)
+  }
 }

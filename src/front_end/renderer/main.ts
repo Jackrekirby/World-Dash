@@ -160,10 +160,8 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     // x = - 1/dts * (_x - p0.x) + 2/dts * (_y - p0.y) + z
     // x = 1/dts * (p0.x - _x + 2 * (_y - p0.y)) + z
 
-    const [sw, sh] = [sts, sts + heightOverflow]
-
-    canvasPosition.x = canvasPosition.x - dts / 2
-    canvasPosition.y = canvasPosition.y - dts / 2
+    const cx = canvasPosition.x - dts / 2
+    const cy = canvasPosition.y - dts / 2
 
     const p0 = {
       // destination x & y origin (centre)
@@ -171,14 +169,8 @@ export const CreateRenderer = async (): Promise<Renderer> => {
       y: (height - dts) / 2 - heightOverflow * scale
     }
     const p = {
-      x:
-        (1 / dts) * (p0.x - canvasPosition.x + 2 * (canvasPosition.y - p0.y)) +
-        wz +
-        0.5,
-      y:
-        (1 / dts) * (canvasPosition.x - p0.x + 2 * (canvasPosition.y - p0.y)) +
-        wz +
-        0.5,
+      x: (1 / dts) * (p0.x - cx + 2 * (cy - p0.y)) + wz + 0.5,
+      y: (1 / dts) * (cx - p0.x + 2 * (cy - p0.y)) + wz + 0.5,
       z: wz
     }
 
