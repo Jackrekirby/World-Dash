@@ -56,3 +56,9 @@ Isometric Assets (Modified)
 19. Weapons that knock you back
 20. Vehiles / rideable animals
 21. Outrun style biome selection for difficulty
+
+## Procedural Textures
+
+1. Floor split into randomised versions of a block (also left and right walls)
+2. Floor must be multi-layered, floor and height pixels
+3. Add connected textures between floors and walls

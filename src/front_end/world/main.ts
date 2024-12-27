@@ -190,6 +190,25 @@ export const CreateWorld = (): World => {
         }
       }
     }
+
+    for (let tile of _tiles) {
+      if (tile.tileType === TileType.dirt) {
+        const p: Pos3D = {
+          x: tile.p.x,
+          y: tile.p.y - 1,
+          z: tile.p.z
+        }
+        const neighbour: WorldTile | undefined = GetTile(p)
+
+        if (neighbour && [TileType.sand].includes(neighbour.tileType)) {
+          const dirtEdge: WorldTile = {
+            p,
+            tileType: TileType.dirtFrontEdge
+          }
+          _tiles.push(dirtEdge)
+        }
+      }
+    }
   }
 
   return {

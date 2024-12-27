@@ -17,7 +17,8 @@ export enum TileType {
   lava = 'lava',
   blueOrchid = 'blueOrchid',
   rose = 'rose',
-  palmTree = 'palmTree'
+  palmTree = 'palmTree',
+  dirtFrontEdge = 'dirtFrontEdge'
 }
 
 export interface World {

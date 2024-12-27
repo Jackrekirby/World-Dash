@@ -201,6 +201,17 @@ const tileMap: Map<TileType, TileTypeData> = new Map([
       tileset: TileSet.tiles,
       tileSelector: (worldPosition: Pos3D, time: DOMHighResTimeStamp) => 0
     })
+  ],
+  [
+    TileType.dirtFrontEdge,
+    CreateRandomisedTileTypeData({
+      tileIndexes: [
+        { x: 0, y: 4 },
+        { x: 1, y: 4 },
+        { x: 2, y: 4 }
+      ],
+      tileset: TileSet.tiles
+    })
   ]
 ])
 
