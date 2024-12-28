@@ -47,7 +47,8 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     [
       TileSet.mapIndicators,
       await LoadImage('assets/IsometricTRPGAssetPack_MapIndicators2.png')
-    ]
+    ],
+    [TileSet.edges, await LoadImage('assets/procedural/edges.png')]
   ])
 
   // Member Functions

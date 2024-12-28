@@ -1,4 +1,5 @@
 import { Pos2D, Pos3D } from '../miscellaneous/types'
+import { EDGE_TILESET_DATA } from '../procedural/edges'
 import { RenderTile, TileSet } from '../renderer/types'
 import { WorldTile } from '../world/main'
 import { TileType } from '../world/types'
@@ -97,7 +98,7 @@ const CreateRandomNoise2D = (): ((p: Pos2D) => number) => {
 
 const SurfaceNoise = CreateRandomNoise2D()
 
-const tileMap: Map<TileType, TileTypeData> = new Map([
+const tileMap: Map<TileType | string, TileTypeData> = new Map([
   [
     TileType.dirt,
     CreateRandomisedTileTypeData({
@@ -214,6 +215,15 @@ const tileMap: Map<TileType, TileTypeData> = new Map([
     })
   ]
 ])
+
+export const InitialiseEdgeTiles = () => {
+  for (const [name, p] of Object.entries(EDGE_TILESET_DATA)) {
+    tileMap.set(
+      name,
+      CreateBasicTileTypeData({ tileIndex: p, tileset: TileSet.edges })
+    )
+  }
+}
 
 const MapGet = <K, V>(map: Map<K, V>, key: K): V => {
   const value: V | undefined = map.get(key)

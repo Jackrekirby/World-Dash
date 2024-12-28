@@ -62,3 +62,13 @@ Isometric Assets (Modified)
 1. Floor split into randomised versions of a block (also left and right walls)
 2. Floor must be multi-layered, floor and height pixels
 3. Add connected textures between floors and walls
+
+## Rendering Process
+
+1. Generates WorldTile[] with a position and TileType
+2. Generatye RenderTile[] which converts a TileType to a tileset name and index, given the time and world position for animated textures and spatially randomised textures.
+3. RenderTile[] are sorted from back to front and drawn to canvas
+
+Issues
+1. Tiletypes are static, I want to generate a huge number of variants I do not want to name individually
+2. Cannot easily customise the tile rendered, everything centrally controlled.

@@ -47,6 +47,9 @@ export const CreateWorld = (): World => {
     return _tiles
   }
 
+  const camelToSnake = (camelCase: string): string =>
+    camelCase.replace(/[A-Z]/g, match => `_${match.toLowerCase()}`)
+
   const GenerateTiles = ({
     landAxialRadius = 1,
     worldAxialRadius = 12
@@ -191,24 +194,48 @@ export const CreateWorld = (): World => {
       }
     }
 
+    const edgedBlocks = [
+      TileType.dirt,
+      TileType.sand,
+      TileType.dryGrass,
+      TileType.stone,
+      TileType.grass
+    ]
+
+    const edgeTiles: WorldTile[] = []
     for (let tile of _tiles) {
-      if (tile.tileType === TileType.dirt) {
+      if (!edgedBlocks.includes(tile.tileType)) {
+        continue
+      }
+      const directions = [
+        { key: 'nx', dir: { x: -1, y: 0 } },
+        { key: 'px', dir: { x: 1, y: 0 } },
+        { key: 'py', dir: { x: 0, y: 1 } },
+        { key: 'ny', dir: { x: 0, y: -1 } }
+      ]
+      for (const { key, dir } of directions) {
         const p: Pos3D = {
-          x: tile.p.x,
-          y: tile.p.y - 1,
+          x: tile.p.x + dir.x,
+          y: tile.p.y + dir.y,
           z: tile.p.z
         }
         const neighbour: WorldTile | undefined = GetTile(p)
 
-        if (neighbour && [TileType.sand].includes(neighbour.tileType)) {
-          const dirtEdge: WorldTile = {
-            p,
-            tileType: TileType.dirtFrontEdge
+        if (
+          neighbour &&
+          neighbour.tileType !== tile.tileType &&
+          edgedBlocks.includes(neighbour.tileType)
+        ) {
+          const tileEdge: WorldTile = {
+            p: tile.p,
+            tileType: `${camelToSnake(neighbour.tileType)}_${key}` as TileType // hack for dynamic tiles
           }
-          _tiles.push(dirtEdge)
+          edgeTiles.push(tileEdge)
         }
       }
     }
+    console.log('tile length', _tiles.length)
+    _tiles.push(...edgeTiles)
   }
 
   return {
