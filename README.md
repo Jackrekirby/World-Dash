@@ -32,6 +32,7 @@ Isometric Assets (Modified)
 19. Animated textures
 20. Tile metadata (grouped tiles, collision data, lighting normals, can walk through, is solid block)
 21. Procedural textures (e.g., for smoothing between tile types / rough edges)
+22. Flipped / rotated textures for increased variation
 
 ### World Dash
 
@@ -57,11 +58,14 @@ Isometric Assets (Modified)
 20. Vehiles / rideable animals
 21. Outrun style biome selection for difficulty
 
-## Procedural Textures
+## Textures
 
 1. Floor split into randomised versions of a block (also left and right walls)
 2. Floor must be multi-layered, floor and height pixels
 3. Add connected textures between floors and walls
+4. Switch to 16x16 textures (16x17 causes issues). Create seperate grass decoration
+5. Water pixels moving in tile across tiles (procedural water particles)
+6. Need tool for rendering tiles to view repeated textures 
 
 ## Rendering Process
 

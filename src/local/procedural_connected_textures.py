@@ -193,7 +193,7 @@ def boolean_mask_to_alpha(mask: list[bool], chance, min, max) -> list[int]:
             alphas.append(0)
     return alphas
 
-def main():
+def create_procedural_tile_edges():
     ps = create_pixel_positions()
     directory = 'assets/blocks'
     filenames: list[str] = get_filenames_without_extension(directory)
@@ -229,9 +229,69 @@ def main():
         json.dump(meta, f, cls=Pos2DEncoder, indent=4)
 
 
+
+def create_rotated_tiles():
+    ps = create_pixel_positions()
+    mask: list[bool] = [p.z == 10 for p in ps]
+
+    directory = 'assets/blocks'
+    filenames: list[str] = get_filenames_without_extension(directory)
+    images: dict[str, Image.Image] = {}
+    for filename in filenames:
+        name: str = filename
+
+        input_image_path: str = f"{directory}/{name}.png"
+        
+        # Load the original image
+        image = Image.open(input_image_path)
+        image_data = np.array(image)
+        
+        # Reshape the mask to match the image shape
+        mask_array = np.array(mask).reshape(image_data.shape[:2])  # Shape (17, 16) or as needed
+        
+        # Set all pixels not matching the mask to 0 (black)
+        for i in range(image_data.shape[0]):  # Height
+            for j in range(image_data.shape[1]):  # Width
+                if not mask_array[i, j]:
+                    image_data[i, j] = [0, 0, 0, 0]  # Assuming RGBA, or modify based on your image mode
+        
+        # Convert the modified array back to an image
+        modified_image = Image.fromarray(image_data)
+        
+        for ii, transpose_methods in enumerate([[], [Image.FLIP_LEFT_RIGHT], [Image.FLIP_TOP_BOTTOM], [Image.FLIP_LEFT_RIGHT, Image.FLIP_TOP_BOTTOM]]):
+            # Flip the image horizontally
+            flipped_image = modified_image.copy()
+            for transpose_method in transpose_methods:
+                flipped_image = flipped_image.transpose(transpose_method)
+            
+            # Create a copy of the original image for modification
+            original_image_data = np.array(image)
+            offset = [0, 0, 8, 8][ii]
+            # Set non-zero pixels from the flipped image onto the original image copy
+            for i in range(9):  # Height
+                for j in range(image_data.shape[1]):  # Width
+                    dd = flipped_image.getdata()[(i+offset) * image_data.shape[1] + j]
+                    if np.any(dd):  # Check if the pixel is non-zero
+                        original_image_data[i, j] = dd
+            
+            # Convert the modified original image back to an Image object
+            final_image = Image.fromarray(original_image_data)
+
+            key = f"{name}_rot_{['', 'x', 'y', 'xy'][ii]}"
+            images[key] = final_image
     
+    meta, tileset = combine_images_in_memory(images)
+    tileset.save(f"assets/procedural/rotated.png")
+
+    with open(f"assets/procedural/rotated.json", 'w') as f:
+        # Write the JSON data to the file
+        json.dump(meta, f, cls=Pos2DEncoder, indent=4)
     
-       
+def main():
+    # create_procedural_tile_edges()
+    create_rotated_tiles()
+   
+   
    
     
 

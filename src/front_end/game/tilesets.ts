@@ -109,7 +109,16 @@ const tileMap: Map<TileType | string, TileTypeData> = new Map([
       tileset: TileSet.tiles
     })
   ],
-  [TileType.grass, CreateBasicTileTypeData({ tileIndex: { x: 1, y: 0 } })],
+  [
+    TileType.grass,
+    CreateRandomisedTileTypeData({
+      tileIndexes: [
+        { x: 0, y: 5 },
+        { x: 1, y: 5 }
+      ],
+      tileset: TileSet.tiles
+    })
+  ],
   [TileType.stone, CreateBasicTileTypeData({ tileIndex: { x: 2, y: 0 } })],
   [TileType.sand, CreateBasicTileTypeData({ tileIndex: { x: 3, y: 0 } })],
   [
