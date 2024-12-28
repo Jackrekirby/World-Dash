@@ -3,7 +3,7 @@ import { InitialiseDom } from './dom/main'
 import { RandomisePlayerPosition, Render } from './game/main'
 import { GenerateRenderTiles } from './game/tilesets'
 import { Game } from './game/types'
-import { RenderPixelMap } from './procedural/main'
+import { GenerateProceduralConnectedTextures3 } from './procedural/main'
 import { CreateRenderer } from './renderer/main'
 import { RenderTile } from './renderer/types'
 import { CreateWorld } from './world/main'
@@ -15,7 +15,15 @@ const main = async () => {
   canvas.width = 512
   canvas.height = 512
   // RunShadeMap()
-  RenderPixelMap()
+  // GenerateProceduralConnectedTextures2({
+  //   innerMinAlpha: 1.0,
+  //   innerMaxAlpha: 1.0,
+  //   innerPixelChance: 1.0,
+  //   outerMinAlpha: 1.0,
+  //   outerMaxAlpha: 1.0,
+  //   outerPixelChance: 1.0
+  // })
+  GenerateProceduralConnectedTextures3()
   return
 
   const world = CreateWorld()
