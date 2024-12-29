@@ -12,18 +12,44 @@ export const LoadImage = async (src: string): Promise<HTMLImageElement> => {
   })
 }
 
+const GetContext = (canvas: HTMLCanvasElement): CanvasRenderingContext2D => {
+  let newCtx: CanvasRenderingContext2D | null = canvas.getContext('2d')
+  if (newCtx === null) {
+    throw new Error('Failed to get 2D context')
+  }
+  return newCtx
+}
+
+const lowestPowerOf2 = (num: number) => {
+  const lower = 2 ** Math.floor(Math.log2(num))
+  return lower
+}
+
 export const CreateRenderer = async (): Promise<Renderer> => {
   const canvas = elements.canvas
 
   // Initialise
-  const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d')
-  if (!ctx) {
-    throw new Error('Failed to get 2D context')
+
+  let ctx: CanvasRenderingContext2D = GetContext(canvas)
+
+  let [width, height] = [0, 0]
+
+  const sizeCanvas = () => {
+    // console.log('canvas onresize')
+    canvas.width = lowestPowerOf2(canvas.clientWidth) //512 // Math.floor(canvas.clientWidth / 16) * 16
+    canvas.height = canvas.width
+    width = canvas.width
+    height = canvas.height
+
+    // console.log({ width, height })
+
+    ctx = GetContext(canvas)
+
+    ctx.imageSmoothingEnabled = false
   }
 
-  const [width, height] = [canvas.width, canvas.height]
-
-  ctx.imageSmoothingEnabled = false
+  sizeCanvas()
+  window.addEventListener('resize', sizeCanvas)
 
   const SetScale = (scale: number): void => {
     _scale = scale
@@ -63,7 +89,7 @@ export const CreateRenderer = async (): Promise<Renderer> => {
   const DrawIsometricGrid = (): void => {
     ctx.lineWidth = 1
 
-    ctx.strokeStyle = 'hsla(0, 0%, 50%, 0.5)'
+    ctx.strokeStyle = 'hsla(0, 0%, 80%, 0.5)'
     for (let x = 0; x < width; x += _dts) {
       DrawLine(x, 0, x, height)
     }
@@ -71,7 +97,7 @@ export const CreateRenderer = async (): Promise<Renderer> => {
       DrawLine(0, y, width, y)
     }
 
-    ctx.strokeStyle = 'hsl(0, 0%, 100%, 0.5)'
+    ctx.strokeStyle = 'hsl(0, 100%, 100%, 0.5)'
     for (let x = _dts / 2; x < width; x += _dts) {
       DrawLine(x, 0, x, height)
     }
@@ -81,10 +107,10 @@ export const CreateRenderer = async (): Promise<Renderer> => {
 
     for (let y = -_dts; y < height; y += _dts) {
       for (let x = -_dts; x < width; x += _dts) {
-        ctx.strokeStyle = 'hsla(200, 100%, 80%, 0.5)'
+        ctx.strokeStyle = 'hsla(200, 100%, 80%, 0.6)'
         DrawLine(x, y, x + 2 * _dts, y + _dts)
 
-        ctx.strokeStyle = 'hsla(100, 100%, 80%, 0.5)'
+        ctx.strokeStyle = 'hsla(100, 100%, 80%, 0.6)'
         DrawLine(x, y + _dts, x + 2 * _dts, y)
       }
     }

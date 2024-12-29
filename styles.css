@@ -8,6 +8,11 @@
   font-family: CustomFont, sans-serif !important;
   user-select: none;
   color: white;
+
+  --box-margin: 8px;
+  --box-size: calc((min(100vw, 100vh - 232px) - var(--box-margin)));
+  --box-width: var(--box-size);
+  --box-height: var(--box-size);
 }
 
 button {
@@ -20,10 +25,6 @@ html {
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
   height: 100%;
   margin: 0;
   background-color: hsl(30, 3%, 18%);
@@ -31,7 +32,13 @@ body {
 }
 
 #canvas {
+  box-sizing: border-box;
   border: 1px solid white;
+  margin: var(--box-margin);
+  width: var(--box-width);
+  height: var(--box-height);
+  max-width: var(--box-width);
+  max-height: var(--box-height);
 }
 
 #main {
@@ -44,9 +51,9 @@ body {
 #panel {
   box-sizing: border-box;
   border: 1px solid hsl(0, 0%, 80%);
-  width: 512px;
+  width: var(--box-size);
   height: auto;
-  margin-top: 16px;
+  margin: var(--box-margin);
   padding: 8px 8px;
 }
 
@@ -63,6 +70,7 @@ body {
 }
 
 .button {
+  height: 46px;
   font-size: 14px;
   flex-grow: 1;
   margin: 8px 0px;

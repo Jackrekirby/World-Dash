@@ -234,7 +234,7 @@ export const CreateWorld = (): World => {
         }
       }
     }
-    console.log('tile length', _tiles.length)
+    // console.log('tile length', _tiles.length)
     _tiles.push(...edgeTiles)
   }
 

@@ -1,4 +1,3 @@
-import { elements } from './dom/elements'
 import { InitialiseDom } from './dom/main'
 import { RandomisePlayerPosition, Render } from './game/main'
 import { GenerateRenderTiles, InitialiseEdgeTiles } from './game/tilesets'
@@ -10,9 +9,9 @@ import { CreateWorld } from './world/main'
 console.log('Isometric')
 
 const main = async () => {
-  const canvas = elements.canvas
-  canvas.width = 512
-  canvas.height = 512
+  // const canvas = elements.canvas
+  // canvas.width = 512
+  // canvas.height = 512
   // RunShadeMap()
   // GenerateProceduralConnectedTextures2({
   //   innerMinAlpha: 1.0,
