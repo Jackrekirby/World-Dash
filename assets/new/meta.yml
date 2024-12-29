@@ -1,0 +1,29 @@
+dirt:
+    gen_rotated_variants: true
+dry_grass:
+fallen_log:
+    ignore: true
+fallen_log_block:
+    ignore: true
+flowering_small_cactus:
+flower_a:
+    color_replace: flower_a_pallete
+grass:
+large_stone:
+lava:
+    gen_rotated_variants: true
+oak_trunk:
+    ignore: true
+orchid:
+    animated: true
+    color_replace: orchid_pallete
+palm_bottom:
+palm_top:
+poppy:
+sand:
+    gen_rotated_variants: true
+small_stones:
+stone:
+    gen_rotated_variants: true
+water:
+    animated: true

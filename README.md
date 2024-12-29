@@ -7,7 +7,13 @@ A simple isometric renderer for the web. Hopefully it becomes a fully fledged ga
 Isometric Assets (Modified)
 [https://gvituri.itch.io/isometric-trpg](https://gvituri.itch.io/isometric-trpg)
 
+[https://xilurus.itch.io/pixel-isometric-village/devlog/727373/pixel-isometric-village-release](https://xilurus.itch.io/pixel-isometric-village/devlog/727373/pixel-isometric-village-release)
+
 ## Task List
+
+## Bugs
+
+1. Cursor shifted (since dynamic canvas size)
 
 ### Isometric Functionality
 
