@@ -163,7 +163,7 @@ export const GenerateProceduralConnectedTextures = async () => {
     throw new Error('Failed to get 2D context')
   }
 
-  const [w, h] = [16, 17]
+  const [w, h] = [16, 16]
   const scale = 1
   canvas.width = w * scale
   canvas.height = h * scale
@@ -195,7 +195,7 @@ export const GenerateProceduralConnectedTextures = async () => {
 
     const clrs: number[] = []
     const rs = []
-    const data = ctx2.getImageData(0, 0, 16, 17)
+    const data = ctx2.getImageData(0, 0, 16, 16)
     for (let i = 0; i < data.data.length; i += 4) {
       const r: number = data.data[i]
       let j = clrs.findIndex(c => c === r)
@@ -337,7 +337,7 @@ export const GenerateProceduralConnectedTextures2 = async ({
   outerPixelChance?: number
 } = {}) => {
   const scale = 4
-  const [w, h] = [16, 17]
+  const [w, h] = [16, 16]
   const a = w * h
   const canvas = document.createElement('canvas')
   canvas.width = w * scale
@@ -427,7 +427,7 @@ const IndexToPos2D = (i: number, w: number): Pos2D => {
 export const ConnectedTextureManager = async () => {
   const mask = await LoadImage('assets/edge_masks.png')
 
-  const [w, h] = [16, 17]
+  const [w, h] = [16, 16]
 
   const cache: Map<string, HTMLCanvasElement> = new Map()
 
@@ -514,7 +514,7 @@ export const RenderPixelMap = () => {
     throw new Error('Failed to get 2D context')
   }
 
-  const [w, h] = [16, 17]
+  const [w, h] = [16, 16]
   const scale = 20
   canvas.width = w * scale * 2
   canvas.height = h * scale * 2

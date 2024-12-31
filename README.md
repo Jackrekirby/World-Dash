@@ -82,3 +82,13 @@ Isometric Assets (Modified)
 Issues
 1. Tiletypes are static, I want to generate a huge number of variants I do not want to name individually
 2. Cannot easily customise the tile rendered, everything centrally controlled.
+
+## Refactor
+
+Things to rewrite:
+
+1. Render in game/main.ts (potentially - it just renders a tileset index and world position)
+2. game/tilesets.ts
+3. perlin noise - how good is the quality?
+4. remove front_end/procedural, now done locally
+5. renderer/main - change to 16x16 & fix grid render & cursor

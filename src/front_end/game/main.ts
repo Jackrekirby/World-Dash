@@ -1,5 +1,6 @@
 import { Pos2D, Pos3D } from '../miscellaneous/types'
-import { Renderer, RenderTile, TileSet } from '../renderer/types'
+import { CreateRenderTile } from '../procedural/new'
+import { Renderer, RenderTile } from '../renderer/types'
 import { WorldTile } from '../world/main'
 import { TileType, World } from '../world/types'
 import { Game } from './types'
@@ -34,20 +35,18 @@ export const Render = (
   // draw cursor
   const cursorWorldPosition = world.GetCursorWorldPosition()
   if (cursorWorldPosition !== null) {
-    const cursorTile: RenderTile = {
+    const cursorTile: RenderTile = CreateRenderTile({
       worldPosition: cursorWorldPosition,
-      tileIndex: { x: 0, y: 0 },
-      tileset: TileSet.mapIndicators
-    }
+      tilename: 'cursor'
+    })
 
     rTiles.push(cursorTile)
   }
   // draw player
-  const playerTile: RenderTile = {
-    worldPosition: game.playerPosition,
-    tileIndex: { x: time % 1000 < 500 ? 0 : 1, y: 0 },
-    tileset: TileSet.entities
-  }
+  const playerTile: RenderTile = CreateRenderTile({
+    worldPosition: { x: 0, y: 0, z: 1 },
+    tilename: `sword_man_f${time % 1000 < 500 ? 0 : 1}`
+  })
   rTiles.push(playerTile)
 
   // sort tiles for render (move into renderer)

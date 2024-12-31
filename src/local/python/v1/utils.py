@@ -1,10 +1,12 @@
+import math
+import random
 from pathlib import Path
 
 import numpy as np
 import yaml
 from PIL import Image
 from v1.pixel_pos import create_pixel_positions
-from v1.structs import Pos2D, TileMeta, Tileset
+from v1.structs import Pos2D, Pos3D, TileMetaIn, Tileset
 
 
 def create_tileset(images: dict[str, Image.Image]) -> tuple[dict[str, Pos2D], Image.Image]:
@@ -59,14 +61,14 @@ def create_tileset_from_dir(in_dir: str, out_path: str):
     tileset.save()
 
 
-def read_tile_meta(in_path: str) -> list[TileMeta]:
+def read_tile_meta(in_path: str) -> list[TileMetaIn]:
     with open(in_path, "r") as file:
         data = yaml.safe_load(file) 
-    block_configs: list[TileMeta] = []
+    block_configs: list[TileMetaIn] = []
 
     for block_name, attributes in data.items():
         attributes = attributes or {}
-        block_configs.append(TileMeta(
+        block_configs.append(TileMetaIn(
             name=block_name,
             ignore=attributes.get("ignore", False),
             gen_rotated_variants=attributes.get("gen_rotated_variants", False),
@@ -178,4 +180,93 @@ def create_rotated_tiles(image: Image.Image) -> dict[str, Image.Image]:
 
         key = f"rot_{['', 'x', 'y', 'xy'][ii]}"
         images[key] = final_image
+    return images
+
+def generate_boolean_combinations(n: int) -> list[list[bool]]:
+    result = []
+
+    # Total number of combinations is 2^n
+    total_combinations = 1 << n
+
+    for i in range(total_combinations):
+        combination = []
+
+        for j in range(n):
+            # Use bitwise AND to determine if the j-th bit in i is set
+            combination.append((i & (1 << j)) != 0)
+
+        result.append(combination)
+
+    return result
+
+def create_mask(ps: list[Pos3D], combo: list[int], offset: int) -> list[bool]:
+    xs = []
+    ys = []
+    if combo[0]:
+        xs.append(1 + offset)
+    if combo[1]:
+        xs.append(8 - offset)
+    if combo[2]:
+        ys.append(1 + offset)
+    if combo[3]:
+        ys.append(8 - offset)
+    
+    mask = [p.z == 10 and (p.x in xs or p.y in ys) for p in ps]
+    return mask
+
+def create_edge_key(enabledEdges: list[bool]):
+    return f"{'ny' if enabledEdges[0] else ''}{'py' if enabledEdges[1] else ''}{'nx' if enabledEdges[2] else ''}{'px' if enabledEdges[3] else ''}"
+
+def boolean_mask_to_alpha(mask: list[bool], chance, min, max) -> list[int]:
+    alphas: list[int] = []
+    for item in mask:
+        if item and random.uniform(0, 1) < chance:
+            alphas.append(math.floor(random.uniform(min, max) * 255))
+        else:
+            alphas.append(0)
+    return alphas
+
+def apply_mask_to_image(image: Image.Image, mask: list[int]) -> Image.Image:
+    image_data = np.array(image)
+
+    # Ensure the mask has the same number of pixels as the image's height and width
+    mask_array = np.array(mask).reshape(image_data.shape[:2])  # Shape (17, 16)
+    # Iterate through each pixel and apply the mask
+    for i in range(image_data.shape[0]):  # Height
+        for j in range(image_data.shape[1]):  # Width
+            # set alpha to that of mask
+            image_data[i, j][3] = mask_array[i, j]
+
+    # Save the modified image
+    modified_image = Image.fromarray(image_data)
+    return modified_image
+
+
+def create_tile_edges(image: Image.Image) -> dict[str, Image.Image]:
+    ps = create_pixel_positions()
+
+    images: dict[str, Image.Image] = {}
+        
+    for combo in generate_boolean_combinations(4):
+        if sum(combo) != 1:
+            continue # at the moment only single edge tiles are being used
+        
+        # create mask for each ring of pixels from outside to inside
+        masks = [
+            boolean_mask_to_alpha(create_mask(ps, combo, 0), 0.5, 0.5, 1.0),
+            boolean_mask_to_alpha(create_mask(ps, combo, 1), 0.25, 0.3, 0.5),
+            boolean_mask_to_alpha(create_mask(ps, combo, 2), 0.125, 0.1, 0.3)
+        ]
+        # combine all masks into a single mask
+        mask: list[int] = []
+        for i in range(256): # 256 = number of pixels
+            ss = 0
+            for m in masks:
+                ss += m[i]
+            mask.append(ss)
+
+        key = create_edge_key(combo)
+        image = apply_mask_to_image(image, mask)
+        images[key] = image
+
     return images

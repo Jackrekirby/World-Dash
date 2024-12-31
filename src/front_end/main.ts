@@ -1,7 +1,8 @@
 import { InitialiseDom } from './dom/main'
 import { RandomisePlayerPosition, Render } from './game/main'
-import { GenerateRenderTiles, InitialiseEdgeTiles } from './game/tilesets'
+import { InitialiseEdgeTiles } from './game/tilesets'
 import { Game } from './game/types'
+import { CreateRenderTile } from './procedural/new'
 import { CreateRenderer } from './renderer/main'
 import { RenderTile } from './renderer/types'
 import { CreateWorld } from './world/main'
@@ -39,10 +40,17 @@ const main = async () => {
 
   const RenderLoop = () => {
     requestAnimationFrame((time: DOMHighResTimeStamp) => {
-      const rTiles: RenderTile[] = GenerateRenderTiles({
-        worldTiles: world.GetTiles(),
-        time
-      })
+      // const rTiles: RenderTile[] = GenerateRenderTiles({
+      //   worldTiles: world.GetTiles(),
+      //   time
+      // })
+      const rTiles: RenderTile[] = [
+        CreateRenderTile({
+          worldPosition: { x: 0, y: 0, z: 0 },
+          tilename: 'grass'
+        })
+      ]
+
       Render(time, renderer, world, rTiles, game)
       RenderLoop()
     })

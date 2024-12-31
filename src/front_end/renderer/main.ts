@@ -25,6 +25,21 @@ const lowestPowerOf2 = (num: number) => {
   return lower
 }
 
+// const tilesetDemo = {
+//   dirt: {
+//     frames: [
+//       {
+//         variants: []
+//       }
+//     ],
+//     edges: {
+//       px: {
+//         variants: []
+//       }
+//     }
+//   }
+// }
+
 export const CreateRenderer = async (): Promise<Renderer> => {
   const canvas = elements.canvas
 
@@ -59,22 +74,22 @@ export const CreateRenderer = async (): Promise<Renderer> => {
   let _scale = 4
   const sts = 16 // source tile size
   let _dts = sts * _scale // destination tile size
-  const heightOverflow = 1 // pixel
 
   const tileSets: Map<TileSet, HTMLImageElement> = new Map([
-    [
-      TileSet.tiles,
-      await LoadImage('assets/Isometric_MedievalFantasy_Tiles.png')
-    ],
-    [
-      TileSet.entities,
-      await LoadImage('assets/IsometricTRPGAssetPack_OutlinedEntities.png')
-    ],
-    [
-      TileSet.mapIndicators,
-      await LoadImage('assets/IsometricTRPGAssetPack_MapIndicators2.png')
-    ],
-    [TileSet.edges, await LoadImage('assets/procedural/edges.png')]
+    // [
+    //   TileSet.tiles,
+    //   await LoadImage('assets/Isometric_MedievalFantasy_Tiles.png')
+    // ],
+    // [
+    //   TileSet.entities,
+    //   await LoadImage('assets/IsometricTRPGAssetPack_OutlinedEntities.png')
+    // ],
+    // [
+    //   TileSet.mapIndicators,
+    //   await LoadImage('assets/IsometricTRPGAssetPack_MapIndicators2.png')
+    // ],
+    // [TileSet.edges, await LoadImage('assets/procedural/edges.png')],
+    [TileSet.new, await LoadImage('assets/procedural/tileset.png')]
   ])
 
   // Member Functions
@@ -128,7 +143,7 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     const p0 = {
       // destination x & y origin (centre)
       x: (width - _dts) / 2,
-      y: (height - _dts) / 2 - heightOverflow * _scale
+      y: (height - _dts) / 2
     }
     const p = {
       x: p0.x - (x * _dts) / 2 + (y * _dts) / 2,
@@ -143,14 +158,14 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     // w = world x, y & z
     // ti, tj = tile index in x & y
 
-    const [sw, sh] = [sts, sts + heightOverflow] // source width & height (+1 = tile overflow)
+    const [sw, sh] = [sts, sts] // source width & height
     const [sx, sy] = [tile.tileIndex.x * sw, tile.tileIndex.y * sh] // source x & y
     const [dw, dh] = [sw * _scale, sh * _scale] // destination width & height
 
     const [dx0, dy0] = [
       // destination x & y origin (centre)
       (width - _dts) / 2,
-      (height - _dts) / 2 - heightOverflow * _scale
+      (height - _dts) / 2
     ]
 
     const [dx, dy] = [
@@ -165,7 +180,10 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     ]
 
     const d = WorldToCanvasPosition(tile.worldPosition)
-    const image = tileSets.get(tile.tileset) as HTMLImageElement
+    const image: HTMLImageElement | undefined = tileSets.get(tile.tileset)
+    if (image === undefined) {
+      throw new Error(`Tileset undefined ${tile.tileset}`)
+    }
     ctx.drawImage(image, sx, sy, sw, sh, d.x, d.y, dw, dh)
   }
 
@@ -200,8 +218,9 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     const p0 = {
       // destination x & y origin (centre)
       x: (width - _dts) / 2,
-      y: (height - _dts) / 2 - heightOverflow * _scale
+      y: (height - _dts) / 2
     }
+    // console.log(canvasPosition, p0)
     const p = {
       x: (1 / _dts) * (p0.x - cx + 2 * (cy - p0.y)) + wz + 0.5,
       y: (1 / _dts) * (cx - p0.x + 2 * (cy - p0.y)) + wz + 0.5,

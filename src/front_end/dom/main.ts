@@ -30,7 +30,11 @@ export const InitialiseDom = (world: World, renderer: Renderer, game: Game) => {
   })
 
   elements.canvas.addEventListener('mousemove', (event: MouseEvent) => {
-    const canvasPosition: Pos2D = { x: event.offsetX, y: event.offsetY }
+    const rect = elements.canvas.getBoundingClientRect()
+    const canvasPosition: Pos2D = {
+      x: (event.offsetX / rect.width) * elements.canvas.width,
+      y: (event.offsetY / rect.height) * elements.canvas.height
+    }
     const worldPosition: Pos3D | null = CalculateCursorWorldPosition(
       renderer,
       world,

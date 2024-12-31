@@ -24,5 +24,6 @@ export enum TileSet {
   tiles = 'tiles',
   entities = 'entities',
   mapIndicators = 'mapIndicators',
-  edges = 'edges'
+  edges = 'edges',
+  new = 'new'
 }

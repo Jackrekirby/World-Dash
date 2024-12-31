@@ -1,6 +1,6 @@
 import v1.utils as utils
 from PIL import Image
-from v1.structs import TileMeta, Tileset
+from v1.structs import TileMetaIn, Tileset
 
 
 def get_img(name: str) -> Image.Image:
@@ -10,15 +10,15 @@ def get_img(name: str) -> Image.Image:
 
 
 # X ignore
-# - gen_rotated_variants
+# X gen_rotated_variants
 # X animated
 # X color_replace [take first color from each row as the color to replace]
 # - gen_edge_variants
 # - recolor? (orchid)
-# add cursor and player
+# X add cursor and player
 tilesize = 16
 
-def gen_animated_variants(meta: TileMeta, image_variants: dict[str, Image.Image]):
+def gen_animated_variants(meta: TileMetaIn, image_variants: dict[str, Image.Image]):
     if not meta.animated:
         return 
     
@@ -36,7 +36,7 @@ def gen_animated_variants(meta: TileMeta, image_variants: dict[str, Image.Image]
 
     image_variants.update(new_image_variants)
 
-def gen_color_variants(meta: TileMeta, image_variants: dict[str, Image.Image]):
+def gen_color_variants(meta: TileMetaIn, image_variants: dict[str, Image.Image]):
     if meta.color_replace is None:
         return
     
@@ -54,7 +54,7 @@ def gen_color_variants(meta: TileMeta, image_variants: dict[str, Image.Image]):
 
     image_variants.update(new_image_variants)
 
-def gen_rotated_variants(meta: TileMeta, image_variants: dict[str, Image.Image]):
+def gen_rotated_variants(meta: TileMetaIn, image_variants: dict[str, Image.Image]):
     if not meta.gen_rotated_variants:
         return
     
@@ -67,9 +67,21 @@ def gen_rotated_variants(meta: TileMeta, image_variants: dict[str, Image.Image])
 
     image_variants.update(new_total_image_variants)
 
-def main():
+def gen_edge_variants(meta: TileMetaIn, image_variants: dict[str, Image.Image]):
+    if not meta.gen_edge_variants:
+        return
     
-    tile_meta: list[TileMeta] = utils.read_tile_meta('assets/new/meta.yml')
+    new_total_image_variants: dict[str, Image.Image] = {}
+    for name, image in image_variants.items():
+        new_image_variants = utils.create_tile_edges(image)
+        for new_variant_name, new_variant_image in new_image_variants.items():
+            print(f' - var - {name}_{new_variant_name}')
+            new_total_image_variants[f'{name}_{new_variant_name}'] = new_variant_image
+
+    image_variants.update(new_total_image_variants)
+
+def main():
+    tile_meta: list[TileMetaIn] = utils.read_tile_meta('assets/new/meta.yml')
 
     images: dict[str, Image.Image] = {}
     for meta in tile_meta:
@@ -84,8 +96,9 @@ def main():
         
         # variant options can be combined
         gen_animated_variants(meta, accumulated_image_variants)
-        gen_color_variants(meta, accumulated_image_variants)
-        gen_rotated_variants(meta, accumulated_image_variants)
+        # gen_color_variants(meta, accumulated_image_variants)
+        # gen_rotated_variants(meta, accumulated_image_variants)
+        # gen_edge_variants(meta, accumulated_image_variants)
 
         if len(accumulated_image_variants) == 0:
             images[meta.name] = image

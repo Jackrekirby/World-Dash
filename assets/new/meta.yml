@@ -1,6 +1,9 @@
+cursor:
 dirt:
     gen_rotated_variants: true
+    gen_edge_variants: true
 dry_grass:
+    gen_edge_variants: true
 fallen_log:
     ignore: true
 fallen_log_block:
@@ -9,9 +12,11 @@ flowering_small_cactus:
 flower_a:
     color_replace: flower_a_pallete
 grass:
+    gen_edge_variants: true
 large_stone:
 lava:
     gen_rotated_variants: true
+    gen_edge_variants: true
 oak_trunk:
     ignore: true
 orchid:
@@ -22,8 +27,12 @@ palm_top:
 poppy:
 sand:
     gen_rotated_variants: true
+    gen_edge_variants: true
 small_stones:
 stone:
     gen_rotated_variants: true
+    gen_edge_variants: true
+sword_man:
+    animated: true
 water:
     animated: true

@@ -35,11 +35,10 @@ class Tileset:
 
 
 @dataclass
-class TileMeta:
+class TileMetaIn:
     name: str
     ignore: bool = False
     gen_rotated_variants: bool = False
     animated: bool = False
     color_replace: str | None = None
     gen_edge_variants: bool = False
-

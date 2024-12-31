@@ -1,182 +1,86 @@
 {
-    "dirt": {
+    "cursor": {
         "x": 0,
         "y": 0
     },
-    "dirt_rot_": {
+    "dirt": {
         "x": 1,
-        "y": 0
-    },
-    "dirt_rot_x": {
-        "x": 2,
-        "y": 0
-    },
-    "dirt_rot_y": {
-        "x": 3,
-        "y": 0
-    },
-    "dirt_rot_xy": {
-        "x": 4,
         "y": 0
     },
     "dry_grass": {
-        "x": 5,
+        "x": 2,
         "y": 0
     },
     "flowering_small_cactus": {
-        "x": 6,
+        "x": 3,
         "y": 0
     },
-    "flower_a_c0": {
-        "x": 0,
-        "y": 1
-    },
-    "flower_a_c1": {
-        "x": 1,
-        "y": 1
-    },
-    "flower_a_c2": {
-        "x": 2,
-        "y": 1
-    },
-    "flower_a_c3": {
-        "x": 3,
-        "y": 1
-    },
-    "flower_a_c4": {
+    "flower_a": {
         "x": 4,
-        "y": 1
-    },
-    "flower_a_c5": {
-        "x": 5,
-        "y": 1
+        "y": 0
     },
     "grass": {
-        "x": 6,
+        "x": 0,
         "y": 1
     },
     "large_stone": {
-        "x": 0,
-        "y": 2
+        "x": 1,
+        "y": 1
     },
     "lava": {
-        "x": 1,
-        "y": 2
-    },
-    "lava_rot_": {
         "x": 2,
-        "y": 2
+        "y": 1
     },
-    "lava_rot_x": {
+    "orchid_f0": {
         "x": 3,
-        "y": 2
+        "y": 1
     },
-    "lava_rot_y": {
+    "orchid_f1": {
         "x": 4,
-        "y": 2
-    },
-    "lava_rot_xy": {
-        "x": 5,
-        "y": 2
-    },
-    "orchid_f0_c0": {
-        "x": 6,
-        "y": 2
-    },
-    "orchid_f0_c1": {
-        "x": 0,
-        "y": 3
-    },
-    "orchid_f0_c2": {
-        "x": 1,
-        "y": 3
-    },
-    "orchid_f0_c3": {
-        "x": 2,
-        "y": 3
-    },
-    "orchid_f1_c0": {
-        "x": 3,
-        "y": 3
-    },
-    "orchid_f1_c1": {
-        "x": 4,
-        "y": 3
-    },
-    "orchid_f1_c2": {
-        "x": 5,
-        "y": 3
-    },
-    "orchid_f1_c3": {
-        "x": 6,
-        "y": 3
+        "y": 1
     },
     "palm_bottom": {
         "x": 0,
-        "y": 4
+        "y": 2
     },
     "palm_top": {
         "x": 1,
-        "y": 4
+        "y": 2
     },
     "poppy": {
         "x": 2,
-        "y": 4
+        "y": 2
     },
     "sand": {
         "x": 3,
-        "y": 4
-    },
-    "sand_rot_": {
-        "x": 4,
-        "y": 4
-    },
-    "sand_rot_x": {
-        "x": 5,
-        "y": 4
-    },
-    "sand_rot_y": {
-        "x": 6,
-        "y": 4
-    },
-    "sand_rot_xy": {
-        "x": 0,
-        "y": 5
+        "y": 2
     },
     "small_stones": {
-        "x": 1,
-        "y": 5
+        "x": 4,
+        "y": 2
     },
     "stone": {
+        "x": 0,
+        "y": 3
+    },
+    "sword_man_f0": {
+        "x": 1,
+        "y": 3
+    },
+    "sword_man_f1": {
         "x": 2,
-        "y": 5
-    },
-    "stone_rot_": {
-        "x": 3,
-        "y": 5
-    },
-    "stone_rot_x": {
-        "x": 4,
-        "y": 5
-    },
-    "stone_rot_y": {
-        "x": 5,
-        "y": 5
-    },
-    "stone_rot_xy": {
-        "x": 6,
-        "y": 5
+        "y": 3
     },
     "water_f0": {
-        "x": 0,
-        "y": 6
+        "x": 3,
+        "y": 3
     },
     "water_f1": {
-        "x": 1,
-        "y": 6
+        "x": 4,
+        "y": 3
     },
     "water_f2": {
-        "x": 2,
-        "y": 6
+        "x": 0,
+        "y": 4
     }
 }
