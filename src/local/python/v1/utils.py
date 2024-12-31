@@ -77,6 +77,7 @@ def read_tile_meta(in_path: str) -> list[TileMetaIn]:
             gen_edge_variants=attributes.get("gen_edge_variants", False),
             has_manual_variants=attributes.get("has_manual_variants", False),
             is_multi_tile=attributes.get("is_multi_tile", False),
+            gen_left_right_flipped_variant=attributes.get("gen_left_right_flipped_variant", False),
         ))
     
     return block_configs  
@@ -140,6 +141,9 @@ def replace_color_with_variants(image: Image.Image, pallette: Image.Image) -> li
         result_images.append(result_image)
 
     return result_images
+
+def create_left_right_flipped_image(image: Image.Image):
+    return image.transpose(Image.FLIP_LEFT_RIGHT)
 
 def create_rotated_tiles(image: Image.Image) -> dict[str, Image.Image]:
     ps = create_pixel_positions()

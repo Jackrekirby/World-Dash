@@ -23,6 +23,18 @@ def get_img(name: str) -> Image.Image:
 # X add cursor and player
 tilesize = 16
 
+def gen_left_right_flipped_variant(meta: TileMetaIn, image_variants: dict[str, Image.Image]):
+    if not meta.gen_left_right_flipped_variant:
+        return 
+    
+    new_total_image_variants: dict[str, Image.Image] = {}
+    for name, image in image_variants.items():
+        new_image_variant =  utils.create_left_right_flipped_image(image)
+        print(f' - var - {name}:lr_flip')
+        new_total_image_variants[f'{name}:lr_flip'] = new_image_variant
+
+    image_variants.update(new_total_image_variants)
+
 def gen_animated_variants(meta: TileMetaIn, image_variants: dict[str, Image.Image]):
     if not meta.animated:
         return 
@@ -138,14 +150,17 @@ def main():
         print(meta.name)
         
         accumulated_image_variants: dict[str, Image.Image] = {}
-        get_manual_variants(meta, accumulated_image_variants)
-
-        split_variants_into_tiles(meta, accumulated_image_variants)
-        
         # variant options can be combined
+        get_manual_variants(meta, accumulated_image_variants)
+        # do operations that split tiles first
+        split_variants_into_tiles(meta, accumulated_image_variants)
         gen_animated_variants(meta, accumulated_image_variants)
+        # operations that are not order dependent
         gen_color_variants(meta, accumulated_image_variants)
+        # rotations require 16x16 images
+        gen_left_right_flipped_variant(meta, accumulated_image_variants)
         gen_rotated_variants(meta, accumulated_image_variants)
+        # operations gain benefit of accumulated variants
         gen_edge_variants(meta, accumulated_image_variants)
 
         images.update(accumulated_image_variants)

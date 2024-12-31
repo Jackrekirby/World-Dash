@@ -1,4 +1,7 @@
 cursor:
+daisies:
+    gen_left_right_flipped_variant: true
+    color_replace: daisies_pallete
 dirt:
     gen_rotated_variants: true
     gen_edge_variants: true
@@ -9,35 +12,51 @@ fallen_log:
 fallen_log_block:
     ignore: true
 flowering_small_cactus:
+    gen_left_right_flipped_variant: true
 flower_a:
+    gen_left_right_flipped_variant: true
     color_replace: flower_a_pallete
 grass:
     gen_edge_variants: true
 large_stones:
-lava: # cannot generate variants due to being half block
+    gen_left_right_flipped_variant: true
+lava: # cannot yet generate variants due to being half block
 oak_trunk:
+    gen_left_right_flipped_variant: true
 oak_tree:
+    # cannot yet support left right flip in front-end
     is_multi_tile: true
 orchid:
+    gen_left_right_flipped_variant: true
     animated: true
     color_replace: orchid_pallete
-palm_bottom:
-palm_top:
+palm_tree:
+    is_multi_tile: true
 poppy:
+    gen_left_right_flipped_variant: true
 sand:
     gen_rotated_variants: true
     gen_edge_variants: true
 small_stones:
+    gen_left_right_flipped_variant: true
 short_grass:
+    gen_left_right_flipped_variant: true
     has_manual_variants: true
 short_dry_grass:
+    gen_left_right_flipped_variant: true
     has_manual_variants: true
 long_dry_grass:
+    gen_left_right_flipped_variant: true
+    has_manual_variants: true
+long_grass:
+    gen_left_right_flipped_variant: true
     has_manual_variants: true
 stone:
     gen_rotated_variants: true
     gen_edge_variants: true
 sword_man:
     animated: true
+tiny_stones:
+    gen_left_right_flipped_variant: true
 water:
     animated: true

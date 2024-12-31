@@ -1,5 +1,6 @@
 import { CreatePerlinNoise } from '../miscellaneous/perlin_noise'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
+import { WeightedRandomCallbacks } from '../miscellaneous/weighted_random'
 import { TileType, World } from './types'
 
 export interface WorldTile {
@@ -134,36 +135,63 @@ export const CreateWorld = (): World => {
       }
 
       const r = Math.random()
+
+      const WeightedTileGeneration = (
+        weightedTiles: { weight: number; tileTypes: TileType[] }[]
+      ) => {
+        WeightedRandomCallbacks(
+          r,
+          weightedTiles.map(weightedTile => ({
+            weight: weightedTile.weight,
+            callback: () => {
+              for (const tt of weightedTile.tileTypes) {
+                AddDecorativeTile(tt)
+              }
+            }
+          }))
+        )
+      }
+
       if (tileType === TileType.grass) {
-        AddDecorativeTile(TileType.shortGrass)
-        if (r < 0.05) {
-          AddDecorativeTile(TileType.orchid)
-        } else if (r < 0.1) {
-          AddDecorativeTile(TileType.poppy)
-        } else if (r < 0.15) {
-          AddDecorativeTile(TileType.oakTrunk)
-        } else if (r < 0.2) {
-          AddDecorativeTile(TileType.smallStones)
-        } else if (r < 0.25) {
-          AddDecorativeTile(TileType.oakTree)
-        }
+        WeightedTileGeneration([
+          { weight: 0.05, tileTypes: [TileType.shortGrass, TileType.orchid] },
+          { weight: 0.05, tileTypes: [TileType.shortGrass, TileType.poppy] },
+          { weight: 0.05, tileTypes: [TileType.shortGrass, TileType.oakTrunk] },
+          {
+            weight: 0.05,
+            tileTypes: [TileType.shortGrass, TileType.smallStones]
+          },
+          { weight: 0.05, tileTypes: [TileType.shortGrass, TileType.oakTree] },
+          { weight: 0.1, tileTypes: [TileType.shortGrass, TileType.daisies] },
+          { weight: 0.05, tileTypes: [TileType.longGrass] },
+          {
+            weight: 0.03,
+            tileTypes: [TileType.shortGrass, TileType.tinyStones]
+          },
+          {
+            weight: 0.57,
+            tileTypes: [TileType.shortGrass]
+          }
+        ])
       } else if (tileType === TileType.dryGrass) {
-        if (r < 0.1) {
-          AddDecorativeTile(TileType.shortDryGrass)
-          AddDecorativeTile(TileType.plant)
-        } else if (r < 0.2) {
-          AddDecorativeTile(TileType.longDryGrass)
-        } else {
-          AddDecorativeTile(TileType.shortDryGrass)
-        }
+        WeightedTileGeneration([
+          { weight: 0.1, tileTypes: [TileType.shortDryGrass, TileType.plant] },
+          { weight: 0.2, tileTypes: [TileType.longDryGrass] },
+          { weight: 0.7, tileTypes: [TileType.shortDryGrass] }
+        ])
       } else if (tileType === TileType.sand) {
-        if (r < 0.1) {
-          AddDecorativeTile(TileType.cactus)
-        } else if (r < 0.15) {
-          AddDecorativeTile(TileType.palmTree)
-        }
-      } else if (tileType === TileType.stone && r > 0.95) {
-        AddDecorativeTile(TileType.largeStones)
+        WeightedTileGeneration([
+          { weight: 0.1, tileTypes: [TileType.cactus] },
+          { weight: 0.15, tileTypes: [TileType.palmTree] },
+          { weight: 0.75, tileTypes: [] }
+        ])
+      } else if (tileType === TileType.stone) {
+        WeightedTileGeneration([
+          { weight: 0.05, tileTypes: [TileType.largeStones] },
+          { weight: 0.05, tileTypes: [TileType.smallStones] },
+          { weight: 0.1, tileTypes: [TileType.tinyStones] },
+          { weight: 0.8, tileTypes: [] }
+        ])
       }
     }
 

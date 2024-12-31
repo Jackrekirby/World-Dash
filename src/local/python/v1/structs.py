@@ -49,3 +49,4 @@ class TileMetaIn:
     animated: bool = False
     color_replace: str | None = None
     gen_edge_variants: bool = False
+    gen_left_right_flipped_variant: bool = False

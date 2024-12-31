@@ -17,12 +17,15 @@ const worldToRenderTileName: Map<TileType, string> = new Map([
   [TileType.plant, 'flower_a'],
   [TileType.cactus, 'flowering_small_cactus'],
   [TileType.smallStones, 'small_stones'],
+  [TileType.tinyStones, 'tiny_stones'],
   [TileType.largeStones, 'large_stones'],
   [TileType.shortGrass, 'short_grass'],
   [TileType.shortDryGrass, 'short_dry_grass'],
   [TileType.longDryGrass, 'long_dry_grass'],
+  [TileType.longGrass, 'long_grass'],
   [TileType.oakTrunk, 'oak_trunk'],
-  [TileType.poppy, 'poppy']
+  [TileType.poppy, 'poppy'],
+  [TileType.daisies, 'daisies']
 ])
 
 const GetTileVariant = ({
@@ -126,22 +129,24 @@ export const GenerateRenderTiles = ({
         })
       )
     } else if (wTile.tileType === TileType.palmTree) {
-      const pUp = { x: wTile.p.x, y: wTile.p.y, z: wTile.p.z + 1 }
+      const pUp = { x: wTile.p.x, y: wTile.p.y, z: wTile.p.z + 2 }
 
       rTiles.push(
         ...[
           CreateRenderTile({
             worldPosition: pUp,
             tilename: GetTileVariant({
-              name: 'palm_top',
-              p: pUp
+              name: 'palm_tree',
+              p: pUp,
+              onlyParts: ['sub-0_0']
             })
           }),
           CreateRenderTile({
             worldPosition: wTile.p,
             tilename: GetTileVariant({
-              name: 'palm_bottom',
-              p: wTile.p
+              name: 'palm_tree',
+              p: wTile.p,
+              onlyParts: ['sub-0_1']
             })
           })
         ]
@@ -163,6 +168,7 @@ export const GenerateRenderTiles = ({
       )
     } else if (wTile.tileType === TileType.oakTree) {
       const name = 'oak_tree'
+      // get the tile with oak_tree and ex
       const relTilePositions: Pos2D[] = Object.keys(
         TILENAME_TO_TILESET_INDEX_MAP
       )
