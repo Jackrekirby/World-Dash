@@ -13,10 +13,8 @@ flower_a:
     color_replace: flower_a_pallete
 grass:
     gen_edge_variants: true
-large_stone:
-lava:
-    gen_rotated_variants: true
-    gen_edge_variants: true
+large_stones:
+lava: # cannot generate variants due to being half block
 oak_trunk:
     ignore: true
 orchid:
@@ -29,6 +27,8 @@ sand:
     gen_rotated_variants: true
     gen_edge_variants: true
 small_stones:
+short_grass:
+short_dry_grass:
 stone:
     gen_rotated_variants: true
     gen_edge_variants: true

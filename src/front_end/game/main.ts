@@ -1,6 +1,6 @@
 import { Pos2D, Pos3D } from '../miscellaneous/types'
-import { CreateRenderTile } from '../procedural/new'
 import { Renderer, RenderTile } from '../renderer/types'
+import { CreateRenderTile } from '../renderer/utils'
 import { WorldTile } from '../world/main'
 import { TileType, World } from '../world/types'
 import { Game } from './types'
@@ -44,8 +44,8 @@ export const Render = (
   }
   // draw player
   const playerTile: RenderTile = CreateRenderTile({
-    worldPosition: { x: 0, y: 0, z: 1 },
-    tilename: `sword_man_f${time % 1000 < 500 ? 0 : 1}`
+    worldPosition: game.playerPosition,
+    tilename: `sword_man:frame-${time % 1000 < 500 ? 0 : 1}`
   })
   rTiles.push(playerTile)
 

@@ -241,21 +241,27 @@ def apply_mask_to_image(image: Image.Image, mask: list[int]) -> Image.Image:
     modified_image = Image.fromarray(image_data)
     return modified_image
 
+def int_to_bool_array(n: int, length: int) -> list[bool]:
+    # Convert the integer to binary and strip the "0b" prefix
+    binary_str = bin(n)[2:].zfill(length)
+    # Map each binary digit to a boolean value
+    return [bit == '1' for bit in binary_str]
 
 def create_tile_edges(image: Image.Image) -> dict[str, Image.Image]:
     ps = create_pixel_positions()
 
     images: dict[str, Image.Image] = {}
         
-    for combo in generate_boolean_combinations(4):
-        if sum(combo) != 1:
+    for i in range(16): # ny py nx px
+        edge_combo = int_to_bool_array(i, 4)
+        if sum(edge_combo) != 1:
             continue # at the moment only single edge tiles are being used
         
         # create mask for each ring of pixels from outside to inside
         masks = [
-            boolean_mask_to_alpha(create_mask(ps, combo, 0), 0.5, 0.5, 1.0),
-            boolean_mask_to_alpha(create_mask(ps, combo, 1), 0.25, 0.3, 0.5),
-            boolean_mask_to_alpha(create_mask(ps, combo, 2), 0.125, 0.1, 0.3)
+            boolean_mask_to_alpha(create_mask(ps, edge_combo, 0), 0.5, 0.5, 1.0),
+            boolean_mask_to_alpha(create_mask(ps, edge_combo, 1), 0.25, 0.3, 0.5),
+            boolean_mask_to_alpha(create_mask(ps, edge_combo, 2), 0.125, 0.1, 0.3)
         ]
         # combine all masks into a single mask
         mask: list[int] = []
@@ -265,7 +271,7 @@ def create_tile_edges(image: Image.Image) -> dict[str, Image.Image]:
                 ss += m[i]
             mask.append(ss)
 
-        key = create_edge_key(combo)
+        key = create_edge_key(edge_combo)
         image = apply_mask_to_image(image, mask)
         images[key] = image
 

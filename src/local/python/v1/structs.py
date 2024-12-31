@@ -29,9 +29,14 @@ class Tileset:
 
    def save(self, out_path: str):
       self.image.save(f"{out_path}.png")
-
-      with open(f"{out_path}.json", 'w') as f:
-         json.dump(self.meta, f, cls=Pos2DEncoder, indent=4)
+      data = json.dumps(self.meta, cls=Pos2DEncoder, indent=4)
+      body = (
+         "import { Pos2D } from '../miscellaneous/types'\n"
+         f"export const TILENAME_TO_TILESET_INDEX_MAP: {{ [key: string]: Pos2D }} = {data}"
+      )
+      with open("src/front_end/renderer/tileset.ts", 'w') as f:
+         f.write(body)
+         
 
 
 @dataclass

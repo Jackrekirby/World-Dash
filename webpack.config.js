@@ -24,7 +24,8 @@ class UpdateBuildTimePlugin {
 }
 module.exports = {
     mode: 'development',
-    entry: './src/front_end/main.ts',
+    context: path.resolve(__dirname, 'src/front_end'), // Base directory for entry and loaders
+    entry: './main.ts', // Relative to the `context`
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'src')

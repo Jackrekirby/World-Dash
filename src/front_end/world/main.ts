@@ -129,18 +129,22 @@ export const CreateWorld = (): World => {
 
       const r = Math.random()
       if (tileType === TileType.grass) {
+        AddDecorativeTile(TileType.shortGrass)
         if (r < 0.05) {
-          AddDecorativeTile(TileType.blueOrchid)
+          AddDecorativeTile(TileType.orchid)
         } else if (r < 0.1) {
-          AddDecorativeTile(TileType.rose)
+          AddDecorativeTile(TileType.poppy)
         } else if (r < 0.15) {
           AddDecorativeTile(TileType.log)
           AddDecorativeTile(TileType.canopy, 2)
         } else if (r < 0.2) {
           AddDecorativeTile(TileType.smallStones)
         }
-      } else if (tileType === TileType.dryGrass && r < 0.1) {
-        AddDecorativeTile(TileType.plant)
+      } else if (tileType === TileType.dryGrass) {
+        AddDecorativeTile(TileType.shortDryGrass)
+        if (r < 0.1) {
+          AddDecorativeTile(TileType.plant)
+        }
       } else if (tileType === TileType.sand) {
         if (r < 0.1) {
           AddDecorativeTile(TileType.cactus)
@@ -228,7 +232,9 @@ export const CreateWorld = (): World => {
         ) {
           const tileEdge: WorldTile = {
             p: tile.p,
-            tileType: `${camelToSnake(neighbour.tileType)}_${key}` as TileType // hack for dynamic tiles
+            tileType: `${camelToSnake(
+              neighbour.tileType
+            )}:edge-${key}` as TileType // hack for dynamic tiles
           }
           edgeTiles.push(tileEdge)
         }

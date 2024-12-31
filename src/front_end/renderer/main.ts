@@ -25,21 +25,6 @@ const lowestPowerOf2 = (num: number) => {
   return lower
 }
 
-// const tilesetDemo = {
-//   dirt: {
-//     frames: [
-//       {
-//         variants: []
-//       }
-//     ],
-//     edges: {
-//       px: {
-//         variants: []
-//       }
-//     }
-//   }
-// }
-
 export const CreateRenderer = async (): Promise<Renderer> => {
   const canvas = elements.canvas
 
@@ -76,20 +61,7 @@ export const CreateRenderer = async (): Promise<Renderer> => {
   let _dts = sts * _scale // destination tile size
 
   const tileSets: Map<TileSet, HTMLImageElement> = new Map([
-    // [
-    //   TileSet.tiles,
-    //   await LoadImage('assets/Isometric_MedievalFantasy_Tiles.png')
-    // ],
-    // [
-    //   TileSet.entities,
-    //   await LoadImage('assets/IsometricTRPGAssetPack_OutlinedEntities.png')
-    // ],
-    // [
-    //   TileSet.mapIndicators,
-    //   await LoadImage('assets/IsometricTRPGAssetPack_MapIndicators2.png')
-    // ],
-    // [TileSet.edges, await LoadImage('assets/procedural/edges.png')],
-    [TileSet.new, await LoadImage('assets/procedural/tileset.png')]
+    [TileSet.main, await LoadImage('assets/tileset.png')]
   ])
 
   // Member Functions

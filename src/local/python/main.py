@@ -4,7 +4,7 @@ from v1.structs import TileMetaIn, Tileset
 
 
 def get_img(name: str) -> Image.Image:
-    img_path: str = f"assets/new/{name}.png"
+    img_path: str = f"assets/tiles/{name}.png"
     image = Image.open(img_path)
     return image
 
@@ -26,12 +26,12 @@ def gen_animated_variants(meta: TileMetaIn, image_variants: dict[str, Image.Imag
     for name, image in image_variants.items():
         new_image_variants_list = utils.split_image(image, width=tilesize, height=tilesize)
         for i, new_image_variant in enumerate(new_image_variants_list):
-            print(f' - var - {name}_f{i}')
-            new_image_variants[f'{name}_f{i}'] = new_image_variant
+            print(f' - var - {name}:frame-{i}')
+            new_image_variants[f'{name}:frame-{i}'] = new_image_variant
 
     keys = list(image_variants.keys())
     for k in keys:
-        print(f' - del ani - {k}')
+        print(f' - del frame - {k}')
         del image_variants[k]
 
     image_variants.update(new_image_variants)
@@ -44,12 +44,12 @@ def gen_color_variants(meta: TileMetaIn, image_variants: dict[str, Image.Image])
     for name, image in image_variants.items():
         new_image_variants_list = utils.replace_color_with_variants(image, get_img(meta.color_replace))
         for i, new_image_variant in enumerate(new_image_variants_list):
-            print(f' - var - {name}_c{i}')
-            new_image_variants[f'{name}_c{i}'] = new_image_variant
+            print(f' - var - {name}:color-{i}')
+            new_image_variants[f'{name}:color-{i}'] = new_image_variant
     
     keys = list(image_variants.keys())
     for k in keys:
-        print(f' - del col - {k}')
+        print(f' - del color - {k}')
         del image_variants[k]
 
     image_variants.update(new_image_variants)
@@ -61,9 +61,14 @@ def gen_rotated_variants(meta: TileMetaIn, image_variants: dict[str, Image.Image
     new_total_image_variants: dict[str, Image.Image] = {}
     for name, image in image_variants.items():
         new_image_variants = utils.create_rotated_tiles(image)
-        for new_variant_name, new_variant_image in new_image_variants.items():
-            print(f' - var - {name}_{new_variant_name}')
-            new_total_image_variants[f'{name}_{new_variant_name}'] = new_variant_image
+        for i, (new_variant_name, new_variant_image) in enumerate(new_image_variants.items()):
+            print(f' - var - {name}:rot-{i}')
+            new_total_image_variants[f'{name}:rot-{i}'] = new_variant_image
+
+    keys = list(image_variants.keys())
+    for k in keys:
+        print(f' - del rot - {k}')
+        del image_variants[k]
 
     image_variants.update(new_total_image_variants)
 
@@ -75,13 +80,13 @@ def gen_edge_variants(meta: TileMetaIn, image_variants: dict[str, Image.Image]):
     for name, image in image_variants.items():
         new_image_variants = utils.create_tile_edges(image)
         for new_variant_name, new_variant_image in new_image_variants.items():
-            print(f' - var - {name}_{new_variant_name}')
-            new_total_image_variants[f'{name}_{new_variant_name}'] = new_variant_image
+            print(f' - var - {name}:edge-{new_variant_name}')
+            new_total_image_variants[f'{name}:edge-{new_variant_name}'] = new_variant_image
 
     image_variants.update(new_total_image_variants)
 
 def main():
-    tile_meta: list[TileMetaIn] = utils.read_tile_meta('assets/new/meta.yml')
+    tile_meta: list[TileMetaIn] = utils.read_tile_meta('assets/tiles.yml')
 
     images: dict[str, Image.Image] = {}
     for meta in tile_meta:
@@ -96,9 +101,9 @@ def main():
         
         # variant options can be combined
         gen_animated_variants(meta, accumulated_image_variants)
-        # gen_color_variants(meta, accumulated_image_variants)
-        # gen_rotated_variants(meta, accumulated_image_variants)
-        # gen_edge_variants(meta, accumulated_image_variants)
+        gen_color_variants(meta, accumulated_image_variants)
+        gen_rotated_variants(meta, accumulated_image_variants)
+        gen_edge_variants(meta, accumulated_image_variants)
 
         if len(accumulated_image_variants) == 0:
             images[meta.name] = image
@@ -108,7 +113,7 @@ def main():
 
     
     tileset: Tileset = utils.create_tileset(images)
-    tileset.save('assets/procedural/tileset')
+    tileset.save('assets/tileset')
 
 
 if __name__ == "__main__":

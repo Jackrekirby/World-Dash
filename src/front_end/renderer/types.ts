@@ -21,9 +21,5 @@ export interface RenderTile {
 }
 
 export enum TileSet {
-  tiles = 'tiles',
-  entities = 'entities',
-  mapIndicators = 'mapIndicators',
-  edges = 'edges',
-  new = 'new'
+  main = 'main'
 }
