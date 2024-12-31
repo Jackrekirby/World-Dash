@@ -26,7 +26,6 @@ const main = async () => {
         worldTiles: world.GetTiles(),
         time
       })
-
       Render(time, renderer, world, rTiles, game)
       RenderLoop()
     })

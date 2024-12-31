@@ -68,6 +68,12 @@ export const CreateWorld = (): World => {
       }
     }
 
+    for (let y = -worldAxialRadius; y <= worldAxialRadius; y += 1) {
+      for (let x = -worldAxialRadius; x <= worldAxialRadius; x += 1) {
+        tiles.push({ p: { x, y, z: -1 }, tileType: TileType.sand })
+      }
+    }
+
     const offset = worldAxialRadius // Perlin noise does not like negative numbers
     const octaves = 4
     for (const p of positions) {
@@ -135,15 +141,20 @@ export const CreateWorld = (): World => {
         } else if (r < 0.1) {
           AddDecorativeTile(TileType.poppy)
         } else if (r < 0.15) {
-          AddDecorativeTile(TileType.log)
-          AddDecorativeTile(TileType.canopy, 2)
+          AddDecorativeTile(TileType.oakTrunk)
         } else if (r < 0.2) {
           AddDecorativeTile(TileType.smallStones)
+        } else if (r < 0.25) {
+          AddDecorativeTile(TileType.oakTree)
         }
       } else if (tileType === TileType.dryGrass) {
-        AddDecorativeTile(TileType.shortDryGrass)
         if (r < 0.1) {
+          AddDecorativeTile(TileType.shortDryGrass)
           AddDecorativeTile(TileType.plant)
+        } else if (r < 0.2) {
+          AddDecorativeTile(TileType.longDryGrass)
+        } else {
+          AddDecorativeTile(TileType.shortDryGrass)
         }
       } else if (tileType === TileType.sand) {
         if (r < 0.1) {

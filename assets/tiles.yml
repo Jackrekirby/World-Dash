@@ -16,7 +16,8 @@ grass:
 large_stones:
 lava: # cannot generate variants due to being half block
 oak_trunk:
-    ignore: true
+oak_tree:
+    is_multi_tile: true
 orchid:
     animated: true
     color_replace: orchid_pallete
@@ -28,7 +29,11 @@ sand:
     gen_edge_variants: true
 small_stones:
 short_grass:
+    has_manual_variants: true
 short_dry_grass:
+    has_manual_variants: true
+long_dry_grass:
+    has_manual_variants: true
 stone:
     gen_rotated_variants: true
     gen_edge_variants: true

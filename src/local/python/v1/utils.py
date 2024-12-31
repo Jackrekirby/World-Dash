@@ -75,13 +75,15 @@ def read_tile_meta(in_path: str) -> list[TileMetaIn]:
             animated=attributes.get("animated", False),
             color_replace=attributes.get("color_replace"),
             gen_edge_variants=attributes.get("gen_edge_variants", False),
+            has_manual_variants=attributes.get("has_manual_variants", False),
+            is_multi_tile=attributes.get("is_multi_tile", False),
         ))
     
     return block_configs  
 
 
 
-def split_image(image: Image.Image, width: int, height: int) -> list[Image.Image]:    
+def split_image(image: Image.Image, width: int, height: int) -> dict[str, Image.Image]:    
     # Get the original size of the image
     img_width, img_height = image.size
     
@@ -90,7 +92,7 @@ def split_image(image: Image.Image, width: int, height: int) -> list[Image.Image
         raise ValueError("Image must have integer divisible width and height")
     
     # Create a list to store the split images
-    split_images: list[Image.Image] = []
+    split_images: dict[str, Image.Image] = {}
     
     # Loop through the height of the image and create smaller images
     for y in range(0, img_height, height):
@@ -98,7 +100,7 @@ def split_image(image: Image.Image, width: int, height: int) -> list[Image.Image
             # Define the box (left, upper, right, lower) to crop
             box = (x, y, x + width, y + height)
             split_img = image.crop(box)
-            split_images.append(split_img)
+            split_images[f"{math.floor(x/width)}_{math.floor(y/height)}"] = split_img
     
     return split_images
 

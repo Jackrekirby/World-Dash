@@ -1,4 +1,5 @@
 import { SurfaceNoise } from '../miscellaneous/random_noise'
+import { warnOnce } from '../miscellaneous/single_log'
 import { Pos2D } from '../miscellaneous/types'
 import { TILENAME_TO_TILESET_INDEX_MAP } from '../renderer/tileset'
 import { RenderTile } from '../renderer/types'
@@ -19,6 +20,8 @@ const worldToRenderTileName: Map<TileType, string> = new Map([
   [TileType.largeStones, 'large_stones'],
   [TileType.shortGrass, 'short_grass'],
   [TileType.shortDryGrass, 'short_dry_grass'],
+  [TileType.longDryGrass, 'long_dry_grass'],
+  [TileType.oakTrunk, 'oak_trunk'],
   [TileType.poppy, 'poppy']
 ])
 
@@ -158,8 +161,46 @@ export const GenerateRenderTiles = ({
           })
         })
       )
+    } else if (wTile.tileType === TileType.oakTree) {
+      const name = 'oak_tree'
+      const relTilePositions: Pos2D[] = Object.keys(
+        TILENAME_TO_TILESET_INDEX_MAP
+      )
+        .filter(key => {
+          const parts: string[] = key.split(':')
+          return parts[0] === name
+        })
+        .map(key => {
+          const parts: string[] = key.split(':')
+          const subpart = parts.find(part => part.startsWith('sub-'))
+          if (subpart === undefined) {
+            throw new Error(`Expected oak tree to be multiple tiles ${key}`)
+          }
+          const [x, y] = subpart.slice(4).split('_')
+          return { x: Number(x), y: Number(y) }
+        })
+      for (const p of relTilePositions) {
+        const subKey = `sub-${p.x}_${p.y}`
+        rTiles.push(
+          CreateRenderTile({
+            worldPosition: {
+              x: wTile.p.x + 1 - p.x,
+              y: wTile.p.y - 1 + p.x,
+              z: wTile.p.z + 4 - p.y * 2 - 1
+            },
+            tilename: GetTileVariant({
+              name,
+              p: wTile.p,
+              onlyParts: [subKey]
+            })
+          })
+        )
+      }
     } else {
-      // console.warn(`This tile type is not being rendered ${wTile.tileType}`)
+      warnOnce(
+        `missing-tile-type-${wTile.tileType}`,
+        `This tile type is not being rendered ${wTile.tileType}`
+      )
     }
   }
 

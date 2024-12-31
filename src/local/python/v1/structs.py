@@ -43,6 +43,8 @@ class Tileset:
 class TileMetaIn:
     name: str
     ignore: bool = False
+    is_multi_tile: bool = False
+    has_manual_variants: bool = False
     gen_rotated_variants: bool = False
     animated: bool = False
     color_replace: str | None = None
