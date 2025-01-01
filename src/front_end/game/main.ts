@@ -1,8 +1,7 @@
 import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { Renderer, RenderTile } from '../renderer/types'
 import { CreateRenderTile } from '../renderer/utils'
-import { WorldTile } from '../world/main'
-import { TileType, World } from '../world/types'
+import { TileType, World, WorldTile } from '../world/types'
 import { Game } from './types'
 
 export const RandomisePlayerPosition = (world: World): Pos3D => {

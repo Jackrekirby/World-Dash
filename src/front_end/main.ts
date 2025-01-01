@@ -4,16 +4,16 @@ import { GenerateRenderTiles } from './game/tileset'
 import { DisplayMode, Game } from './game/types'
 import { CreateRenderer } from './renderer/main'
 import { RenderTile } from './renderer/types'
-import { CreateWorld, WorldTile } from './world/main'
-import { TileType } from './world/types'
+import { CreateWorld } from './world/main'
+import { TileType, WorldTile } from './world/types'
 
 console.log('Isometric')
 
 const TestWorld = (): WorldTile[] => {
   return [
     {
-      p: { x: 0, y: 0, z: 1 },
-      tileType: TileType.oakTree
+      p: { x: 0, y: 0, z: 0.5 },
+      tileType: TileType.grass
     },
     {
       p: { x: 0, y: 0, z: 0 },
@@ -24,6 +24,7 @@ const TestWorld = (): WorldTile[] => {
 
 const main = async () => {
   const world = CreateWorld()
+  // world.SetTiles(TestWorld())
   world.GenerateTiles({ landAxialRadius: 6, worldAxialRadius: 12 })
 
   const renderer = await CreateRenderer()
@@ -35,8 +36,22 @@ const main = async () => {
 
   InitialiseDom(world, renderer, game)
 
+  let frameCount = 0
+  let lastTime = performance.now()
+
   const RenderLoop = () => {
     requestAnimationFrame((time: DOMHighResTimeStamp) => {
+      frameCount++
+
+      // Calculate elapsed time
+      const elapsedTime = time - lastTime
+      if (elapsedTime >= 2000) {
+        const fps = (frameCount / elapsedTime) * 1000 // Frames per second
+        console.log(`Average FPS: ${fps.toFixed(2)}`)
+        frameCount = 0
+        lastTime = time
+      }
+
       const rTiles: RenderTile[] = GenerateRenderTiles({
         worldTiles: world.GetTiles(),
         time,
@@ -46,6 +61,7 @@ const main = async () => {
       RenderLoop()
     })
   }
+
   RenderLoop()
 }
 

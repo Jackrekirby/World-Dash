@@ -1,13 +1,19 @@
 import { GenIntsToFloat, linInterp } from '../miscellaneous/math'
 import { CreatePerlinNoise } from '../miscellaneous/perlin_noise'
+import { Pos3dEquals, Pos3dScalarOperation } from '../miscellaneous/pos_3d'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { WeightedRandomCallbacks } from '../miscellaneous/weighted_random'
-import { TileType, World } from './types'
+import { TileType, World, WorldTile } from './types'
 
-export interface WorldTile {
-  p: Pos3D
-  tileType: TileType
-}
+export const SurfaceTiles: TileType[] = [
+  TileType.water,
+  TileType.sand,
+  TileType.dirt,
+  TileType.dryGrass,
+  TileType.grass,
+  TileType.stone,
+  TileType.lava
+]
 
 export const CreateWorld = (): World => {
   let _cursorWorldPosition: Pos3D | null = null
@@ -33,12 +39,18 @@ export const CreateWorld = (): World => {
 
   const GetSurfaceTile = (position: Pos2D): WorldTile | undefined => {
     for (let z = 4; z >= 0; z--) {
-      const tile: WorldTile | undefined = _tiles.find(
-        tile =>
-          tile.p.x === position.x && tile.p.y === position.y && tile.p.z === z
+      const tile: WorldTile | undefined = _tiles.find(tile =>
+        Pos3dEquals(
+          { x: position.x, y: position.y, z },
+          Pos3dScalarOperation(tile.p, Math.floor)
+        )
       )
       if (tile !== undefined) {
-        return tile
+        // if player cannot be placed on surface say position invalid
+        if (SurfaceTiles.includes(tile.tileType)) {
+          return tile
+        }
+        return undefined
       }
     }
 
@@ -47,6 +59,10 @@ export const CreateWorld = (): World => {
 
   const GetTiles = () => {
     return _tiles
+  }
+
+  const SetTiles = (tiles: WorldTile[]): void => {
+    _tiles = tiles
   }
 
   const camelToSnake = (camelCase: string): string =>
@@ -305,6 +321,7 @@ export const CreateWorld = (): World => {
     GetCursorWorldPosition,
     GetTile,
     GetTiles,
+    SetTiles,
     GenerateTiles,
     GetSurfaceTile
   }

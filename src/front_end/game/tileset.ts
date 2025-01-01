@@ -4,8 +4,7 @@ import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { TILENAME_TO_TILESET_INDEX_MAP } from '../renderer/tileset'
 import { RenderTile } from '../renderer/types'
 import { CreateRenderTile } from '../renderer/utils'
-import { WorldTile } from '../world/main'
-import { TileType } from '../world/types'
+import { TileType, WorldTile } from '../world/types'
 import { DisplayMode, Game } from './types'
 
 const worldToRenderTileName: Map<TileType, string> = new Map([
