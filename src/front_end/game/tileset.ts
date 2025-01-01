@@ -1,3 +1,4 @@
+import { clamp } from '../miscellaneous/math'
 import { SurfaceNoise } from '../miscellaneous/random_noise'
 import { warnOnce } from '../miscellaneous/single_log'
 import { Pos2D } from '../miscellaneous/types'
@@ -208,6 +209,23 @@ export const GenerateRenderTiles = ({
         `This tile type is not being rendered ${wTile.tileType}`
       )
     }
+  }
+
+  const DEBUG_TILES = false
+  if (DEBUG_TILES) {
+    const debugTiles: RenderTile[] = []
+    for (let rTile of rTiles) {
+      // console.log(rTile.worldPosition.z)
+      const variant = clamp(0, 4, Math.floor(rTile.worldPosition.z) + 1)
+      debugTiles.push(
+        CreateRenderTile({
+          worldPosition: rTile.worldPosition,
+          tilename: `debug:mvar-${variant}`
+        })
+      )
+    }
+
+    rTiles.push(...debugTiles)
   }
 
   return rTiles

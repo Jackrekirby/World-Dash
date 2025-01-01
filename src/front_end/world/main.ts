@@ -1,3 +1,4 @@
+import { GenIntsToFloat, linInterp } from '../miscellaneous/math'
 import { CreatePerlinNoise } from '../miscellaneous/perlin_noise'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { WeightedRandomCallbacks } from '../miscellaneous/weighted_random'
@@ -117,14 +118,18 @@ export const CreateWorld = (): World => {
       if (tileType === TileType.water) {
         wz = 0
       } else if (n1 < 0.2) {
-        wz = 0
+        wz = Math.round(linInterp(0, 0.5, -0.1, 0.2, n1) * 2) / 2
       } else if (n1 < 0.4) {
-        wz = 1
+        wz = Math.round(linInterp(0.5, 1.5, 0.2, 0.4, n1) * 2) / 2
       } else if (n1 < 1.0) {
-        wz = 2
+        wz = Math.round(linInterp(1, 2, 0.4, 1.0, n1) * 2) / 2
       }
-      for (let zz = 0; zz <= wz; zz++) {
-        tiles.push({ p: { x: p.x, y: p.y, z: zz }, tileType })
+
+      for (const zz of GenIntsToFloat(wz)) {
+        tiles.push({
+          p: { x: p.x, y: p.y, z: zz },
+          tileType
+        })
       }
 
       const AddDecorativeTile = (tileType: TileType, z: number = 1) => {

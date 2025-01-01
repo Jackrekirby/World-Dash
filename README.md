@@ -11,9 +11,14 @@ Isometric Assets (Modified)
 
 ## Task List
 
-## Bugs
+## Latest
 
-1. Cursor shifted (since dynamic canvas size)
+1. X Cursor shifted (since dynamic canvas size)
+2. Split multi tiles into tiles properly (use tile mask)
+3. Add z-weight to same tile positions to determine render order
+4. Add cliff tiles procedurally
+5. Add wall edge texture procedurally
+6. Add procedural block shadows
 
 ### Isometric Functionality
 

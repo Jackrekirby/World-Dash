@@ -2,6 +2,8 @@ cursor:
 daisies:
     gen_left_right_flipped_variant: true
     color_replace: daisies_pallete
+debug:
+    has_manual_variants: true
 dirt:
     gen_rotated_variants: true
     gen_edge_variants: true

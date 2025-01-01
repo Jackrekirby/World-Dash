@@ -4,9 +4,23 @@ import { GenerateRenderTiles } from './game/tileset'
 import { Game } from './game/types'
 import { CreateRenderer } from './renderer/main'
 import { RenderTile } from './renderer/types'
-import { CreateWorld } from './world/main'
+import { CreateWorld, WorldTile } from './world/main'
+import { TileType } from './world/types'
 
 console.log('Isometric')
+
+const TestWorld = (): WorldTile[] => {
+  return [
+    {
+      p: { x: 0, y: 0, z: 0.5 },
+      tileType: TileType.grass
+    },
+    {
+      p: { x: 0, y: 1, z: 0 },
+      tileType: TileType.grass
+    }
+  ]
+}
 
 const main = async () => {
   const world = CreateWorld()
