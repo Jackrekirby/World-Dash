@@ -26,7 +26,7 @@ class DirectoryEventHandler(FileSystemEventHandler):
 def watch_directory(directory: str, callback):
     event_handler = DirectoryEventHandler(callback)
     observer = Observer()
-    observer.schedule(event_handler, path=directory, recursive=False)
+    observer.schedule(event_handler, path=directory, recursive=True)
     
     try:
         observer.start()

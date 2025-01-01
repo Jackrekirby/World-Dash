@@ -206,9 +206,15 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     ctx.clearRect(0, 0, width, height)
   }
 
+  const FillCanvas = (fillStyle: string): void => {
+    ctx.fillStyle = fillStyle
+    ctx.fillRect(0, 0, width, height)
+  }
+
   return {
     CanvasToWorldPosition,
     ClearCanvas,
+    FillCanvas,
     DrawIsometricTile,
     DrawIsometricGrid,
     SetScale

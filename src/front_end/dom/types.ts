@@ -3,4 +3,5 @@ export interface Elements {
   toggleGrid: HTMLDivElement
   randomiseWorld: HTMLButtonElement
   tileScale: HTMLButtonElement
+  displayMode: HTMLButtonElement
 }

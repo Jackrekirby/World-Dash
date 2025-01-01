@@ -4,7 +4,8 @@ const elementIds: (keyof Elements)[] = [
   'canvas',
   'toggleGrid',
   'randomiseWorld',
-  'tileScale'
+  'tileScale',
+  'displayMode'
 ]
 
 const GetElements = (): Elements => {

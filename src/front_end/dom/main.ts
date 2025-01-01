@@ -1,6 +1,6 @@
 import { CalculateCursorWorldPosition } from '../game/cursor'
 import { RandomisePlayerPosition } from '../game/main'
-import { Game } from '../game/types'
+import { DisplayMode, Game } from '../game/types'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { Renderer } from '../renderer/types'
 import { World } from '../world/types'
@@ -27,6 +27,15 @@ export const InitialiseDom = (world: World, renderer: Renderer, game: Game) => {
     },
     ToString: String,
     FromString: Number
+  })
+
+  CyclicButtonManager({
+    values: ['Normal', 'Debug'],
+    defaultValue: 'Normal',
+    name: 'displayMode',
+    OnChangeCallback: (value: string) => {
+      game.displayMode = value as DisplayMode
+    }
   })
 
   elements.canvas.addEventListener('mousemove', (event: MouseEvent) => {

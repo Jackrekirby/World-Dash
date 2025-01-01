@@ -1,12 +1,12 @@
-import { clamp } from '../miscellaneous/math'
 import { SurfaceNoise } from '../miscellaneous/random_noise'
 import { warnOnce } from '../miscellaneous/single_log'
-import { Pos2D } from '../miscellaneous/types'
+import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { TILENAME_TO_TILESET_INDEX_MAP } from '../renderer/tileset'
 import { RenderTile } from '../renderer/types'
 import { CreateRenderTile } from '../renderer/utils'
 import { WorldTile } from '../world/main'
 import { TileType } from '../world/types'
+import { DisplayMode, Game } from './types'
 
 const worldToRenderTileName: Map<TileType, string> = new Map([
   [TileType.grass, 'grass'],
@@ -27,6 +27,11 @@ const worldToRenderTileName: Map<TileType, string> = new Map([
   [TileType.oakTrunk, 'oak_trunk'],
   [TileType.poppy, 'poppy'],
   [TileType.daisies, 'daisies']
+])
+
+const worldToRenderMultiTileName: Map<TileType, string> = new Map([
+  [TileType.oakTree, 'oak_tree'],
+  [TileType.palmTree, 'palm_tree']
 ])
 
 const GetTileVariant = ({
@@ -84,12 +89,70 @@ const GetAnimatedFrame = (
   return framePeriods.length - 1
 }
 
+const CreateMultiTileRenderTiles = ({
+  name,
+  worldPosition
+}: {
+  name: string
+  worldPosition: Pos3D
+}): RenderTile[] => {
+  const rTiles: RenderTile[] = []
+  const relTilePositions: Pos2D[] = Object.keys(TILENAME_TO_TILESET_INDEX_MAP)
+    .filter(key => {
+      const parts: string[] = key.split(':')
+      return parts[0] === name
+    })
+    .map(key => {
+      const parts: string[] = key.split(':')
+      const subpart = parts.find(part => part.startsWith('sub-'))
+      if (subpart === undefined) {
+        throw new Error(`Expected ${name} to be multiple tiles ${key}`)
+      }
+      const [x, y] = subpart.slice(4).split('_')
+      return { x: Number(x), y: Number(y) }
+    })
+
+  let maxP: Pos2D = { x: 0, y: 0 }
+  for (const p of relTilePositions) {
+    if (maxP.y < p.y) {
+      maxP.y = p.y
+    }
+    if (maxP.x < p.x) {
+      maxP.x = p.x
+    }
+  }
+
+  // assumes multi-tile has origin at horizontal centre
+  // and vertically at bottom
+  const xOffset = Math.floor(maxP.x / 2)
+  for (const p of relTilePositions) {
+    const subKey = `sub-${p.x}_${p.y}`
+    rTiles.push(
+      CreateRenderTile({
+        worldPosition: {
+          x: worldPosition.x + xOffset - p.x,
+          y: worldPosition.y - xOffset + p.x,
+          z: worldPosition.z + maxP.y - p.y - 1
+        },
+        tilename: GetTileVariant({
+          name,
+          p: worldPosition,
+          onlyParts: [subKey]
+        })
+      })
+    )
+  }
+  return rTiles
+}
+
 export const GenerateRenderTiles = ({
   worldTiles,
-  time
+  time,
+  game
 }: {
   worldTiles: WorldTile[]
   time: DOMHighResTimeStamp
+  game: Game
 }): RenderTile[] => {
   const rTiles: RenderTile[] = [] // render tiles
 
@@ -129,29 +192,6 @@ export const GenerateRenderTiles = ({
           })
         })
       )
-    } else if (wTile.tileType === TileType.palmTree) {
-      const pUp = { x: wTile.p.x, y: wTile.p.y, z: wTile.p.z + 2 }
-
-      rTiles.push(
-        ...[
-          CreateRenderTile({
-            worldPosition: pUp,
-            tilename: GetTileVariant({
-              name: 'palm_tree',
-              p: pUp,
-              onlyParts: ['sub-0_0']
-            })
-          }),
-          CreateRenderTile({
-            worldPosition: wTile.p,
-            tilename: GetTileVariant({
-              name: 'palm_tree',
-              p: wTile.p,
-              onlyParts: ['sub-0_1']
-            })
-          })
-        ]
-      )
     } else if (
       wTile.tileType.split(':').some(part => part.startsWith('edge-'))
     ) {
@@ -167,42 +207,13 @@ export const GenerateRenderTiles = ({
           })
         })
       )
-    } else if (wTile.tileType === TileType.oakTree) {
-      const name = 'oak_tree'
-      // get the tile with oak_tree and ex
-      const relTilePositions: Pos2D[] = Object.keys(
-        TILENAME_TO_TILESET_INDEX_MAP
+    } else if (worldToRenderMultiTileName.has(wTile.tileType)) {
+      rTiles.push(
+        ...CreateMultiTileRenderTiles({
+          name: worldToRenderMultiTileName.get(wTile.tileType) as string,
+          worldPosition: wTile.p
+        })
       )
-        .filter(key => {
-          const parts: string[] = key.split(':')
-          return parts[0] === name
-        })
-        .map(key => {
-          const parts: string[] = key.split(':')
-          const subpart = parts.find(part => part.startsWith('sub-'))
-          if (subpart === undefined) {
-            throw new Error(`Expected oak tree to be multiple tiles ${key}`)
-          }
-          const [x, y] = subpart.slice(4).split('_')
-          return { x: Number(x), y: Number(y) }
-        })
-      for (const p of relTilePositions) {
-        const subKey = `sub-${p.x}_${p.y}`
-        rTiles.push(
-          CreateRenderTile({
-            worldPosition: {
-              x: wTile.p.x + 1 - p.x,
-              y: wTile.p.y - 1 + p.x,
-              z: wTile.p.z + 4 - p.y * 2 - 1
-            },
-            tilename: GetTileVariant({
-              name,
-              p: wTile.p,
-              onlyParts: [subKey]
-            })
-          })
-        )
-      }
     } else {
       warnOnce(
         `missing-tile-type-${wTile.tileType}`,
@@ -211,15 +222,21 @@ export const GenerateRenderTiles = ({
     }
   }
 
-  const DEBUG_TILES = false
-  if (DEBUG_TILES) {
+  if (game.displayMode === DisplayMode.Debug) {
     const debugTiles: RenderTile[] = []
+    const uniquePositions: Set<string> = new Set()
     for (let rTile of rTiles) {
+      const p = rTile.worldPosition
+      uniquePositions.add(`${p.x} ${p.y} ${p.z}`)
+    }
+    for (const pStr of uniquePositions) {
+      const [x, y, z] = pStr.split(' ').map(Number)
+      const p: Pos3D = { x, y, z }
       // console.log(rTile.worldPosition.z)
-      const variant = clamp(0, 4, Math.floor(rTile.worldPosition.z) + 1)
+      const variant = p.z < 0 ? 5 + (Math.floor(p.z) % 5) : Math.floor(p.z) % 5
       debugTiles.push(
         CreateRenderTile({
-          worldPosition: rTile.worldPosition,
+          worldPosition: p,
           tilename: `debug:mvar-${variant}`
         })
       )

@@ -10,7 +10,7 @@
   color: white;
 
   --box-margin: 8px;
-  --box-size: calc((min(100vw, 100vh - 232px) - var(--box-margin)));
+  --box-size: calc((min(100vw, 100vh - 290px) - var(--box-margin)));
   --box-width: var(--box-size);
   --box-height: var(--box-size);
 }

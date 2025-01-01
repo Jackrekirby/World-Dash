@@ -96,12 +96,16 @@ def split_image(image: Image.Image, width: int, height: int) -> dict[str, Image.
     split_images: dict[str, Image.Image] = {}
     
     # Loop through the height of the image and create smaller images
-    for y in range(0, img_height, height):
-        for x in range(0, img_width, width):
+    for j in range(0, img_height*2, height):
+        for i in range(0, img_width, width):
+            x = i
+            y = math.floor(j / 2)
             # Define the box (left, upper, right, lower) to crop
             box = (x, y, x + width, y + height)
             split_img = image.crop(box)
-            split_images[f"{math.floor(x/width)}_{math.floor(y/height)}"] = split_img
+            block_img = extract_block_from_image(split_img)
+            if not is_empty_image(block_img):
+                split_images[f"{math.floor(i/width)}_{math.floor(j/height)}"] = block_img
     
     return split_images
 
@@ -282,3 +286,44 @@ def create_tile_edges(image: Image.Image) -> dict[str, Image.Image]:
         images[key] = image
 
     return images
+
+def is_empty_image(image: Image.Image) -> bool:
+    image_data = np.array(image)
+    for i in range(image_data.shape[0]):  # Height
+        for j in range(image_data.shape[1]):  # Width
+            if image_data[i, j][3] > 0:
+                return False
+    return True
+
+def extract_block_from_image(image: Image.Image) -> Image.Image:
+    mask = [
+        [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
+    ]
+
+    image_data = np.array(image)
+    mask_array = np.array(mask)
+
+    # Iterate through each pixel and apply the mask
+    for i in range(image_data.shape[0]):  # Height
+        for j in range(image_data.shape[1]):  # Width
+            if mask_array[i, j] == 0:
+                image_data[i, j] = [0, 0, 0, 0]
+
+    # Save the modified image
+    modified_image = Image.fromarray(image_data)
+    return modified_image

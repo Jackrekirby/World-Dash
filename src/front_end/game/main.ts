@@ -27,7 +27,8 @@ export const Render = (
   tiles: RenderTile[],
   game: Game
 ): void => {
-  renderer.ClearCanvas()
+  // renderer.ClearCanvas()
+  renderer.FillCanvas('hsl(204, 78%, 85%)')
 
   // draw tiles
   const rTiles: RenderTile[] = [...tiles]
