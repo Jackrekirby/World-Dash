@@ -26,7 +26,10 @@ const worldToRenderTileName: Map<TileType, string> = new Map([
   [TileType.longGrass, 'long_grass'],
   [TileType.oakTrunk, 'oak_trunk'],
   [TileType.poppy, 'poppy'],
-  [TileType.daisies, 'daisies']
+  [TileType.daisies, 'daisies'],
+  [TileType.smallBush, 'small_bush'],
+  [TileType.mediumBush, 'medium_bush'],
+  [TileType.sunflowers, 'sunflowers']
 ])
 
 const worldToRenderMultiTileName: Map<TileType, string> = new Map([

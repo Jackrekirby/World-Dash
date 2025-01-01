@@ -53,9 +53,15 @@ long_dry_grass:
 long_grass:
     gen_left_right_flipped_variant: true
     has_manual_variants: true
+medium_bush:
+    gen_left_right_flipped_variant: true
+small_bush:
+    gen_left_right_flipped_variant: true
 stone:
     gen_rotated_variants: true
     gen_edge_variants: true
+sunflowers:
+    gen_left_right_flipped_variant: true
 sword_man:
     animated: true
 tiny_stones:

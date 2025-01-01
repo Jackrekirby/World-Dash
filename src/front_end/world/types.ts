@@ -25,7 +25,10 @@ export enum TileType {
   longGrass = 'longGrass',
   oakTree = 'oakTree',
   daisies = 'daisies',
-  tinyStones = 'tinyStones'
+  tinyStones = 'tinyStones',
+  mediumBush = 'mediumBush',
+  smallBush = 'smallBush',
+  sunflowers = 'sunflowers'
 }
 
 export interface World {

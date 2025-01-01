@@ -584,132 +584,156 @@ export const TILENAME_TO_TILESET_INDEX_MAP: { [key: string]: Pos2D } = {
         "x": 5,
         "y": 10
     },
-    "stone:rot-0": {
+    "medium_bush": {
         "x": 6,
+        "y": 10
+    },
+    "medium_bush:lr_flip": {
+        "x": 7,
+        "y": 10
+    },
+    "small_bush": {
+        "x": 8,
+        "y": 10
+    },
+    "small_bush:lr_flip": {
+        "x": 9,
+        "y": 10
+    },
+    "stone:rot-0": {
+        "x": 10,
         "y": 10
     },
     "stone:rot-1": {
-        "x": 7,
+        "x": 11,
         "y": 10
     },
     "stone:rot-2": {
-        "x": 8,
+        "x": 12,
         "y": 10
     },
     "stone:rot-3": {
-        "x": 9,
+        "x": 13,
         "y": 10
     },
     "stone:rot-0:edge-px": {
-        "x": 10,
-        "y": 10
+        "x": 0,
+        "y": 11
     },
     "stone:rot-0:edge-nx": {
-        "x": 11,
-        "y": 10
+        "x": 1,
+        "y": 11
     },
     "stone:rot-0:edge-py": {
-        "x": 12,
-        "y": 10
+        "x": 2,
+        "y": 11
     },
     "stone:rot-0:edge-ny": {
-        "x": 13,
-        "y": 10
+        "x": 3,
+        "y": 11
     },
     "stone:rot-1:edge-px": {
-        "x": 0,
+        "x": 4,
         "y": 11
     },
     "stone:rot-1:edge-nx": {
-        "x": 1,
+        "x": 5,
         "y": 11
     },
     "stone:rot-1:edge-py": {
-        "x": 2,
+        "x": 6,
         "y": 11
     },
     "stone:rot-1:edge-ny": {
-        "x": 3,
+        "x": 7,
         "y": 11
     },
     "stone:rot-2:edge-px": {
-        "x": 4,
+        "x": 8,
         "y": 11
     },
     "stone:rot-2:edge-nx": {
-        "x": 5,
+        "x": 9,
         "y": 11
     },
     "stone:rot-2:edge-py": {
-        "x": 6,
-        "y": 11
-    },
-    "stone:rot-2:edge-ny": {
-        "x": 7,
-        "y": 11
-    },
-    "stone:rot-3:edge-px": {
-        "x": 8,
-        "y": 11
-    },
-    "stone:rot-3:edge-nx": {
-        "x": 9,
-        "y": 11
-    },
-    "stone:rot-3:edge-py": {
         "x": 10,
         "y": 11
     },
-    "stone:rot-3:edge-ny": {
+    "stone:rot-2:edge-ny": {
         "x": 11,
         "y": 11
     },
-    "sword_man:frame-0": {
+    "stone:rot-3:edge-px": {
         "x": 12,
         "y": 11
     },
-    "sword_man:frame-1": {
+    "stone:rot-3:edge-nx": {
         "x": 13,
         "y": 11
     },
-    "sword_man:frame-2": {
+    "stone:rot-3:edge-py": {
         "x": 0,
         "y": 12
     },
-    "sword_man:frame-3": {
+    "stone:rot-3:edge-ny": {
         "x": 1,
         "y": 12
     },
-    "tiny_stones": {
+    "sunflowers": {
         "x": 2,
         "y": 12
     },
-    "tiny_stones:lr_flip": {
+    "sunflowers:lr_flip": {
         "x": 3,
         "y": 12
     },
-    "water:frame-0": {
+    "sword_man:frame-0": {
         "x": 4,
         "y": 12
     },
-    "water:frame-1": {
+    "sword_man:frame-1": {
         "x": 5,
         "y": 12
     },
-    "water:frame-2": {
+    "sword_man:frame-2": {
         "x": 6,
         "y": 12
     },
-    "water:frame-3": {
+    "sword_man:frame-3": {
         "x": 7,
         "y": 12
     },
-    "water:frame-4": {
+    "tiny_stones": {
         "x": 8,
         "y": 12
     },
-    "water:frame-5": {
+    "tiny_stones:lr_flip": {
         "x": 9,
         "y": 12
+    },
+    "water:frame-0": {
+        "x": 10,
+        "y": 12
+    },
+    "water:frame-1": {
+        "x": 11,
+        "y": 12
+    },
+    "water:frame-2": {
+        "x": 12,
+        "y": 12
+    },
+    "water:frame-3": {
+        "x": 13,
+        "y": 12
+    },
+    "water:frame-4": {
+        "x": 0,
+        "y": 13
+    },
+    "water:frame-5": {
+        "x": 1,
+        "y": 13
     }
 }

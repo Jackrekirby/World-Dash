@@ -174,7 +174,15 @@ export const CreateWorld = (): World => {
             tileTypes: [TileType.shortGrass, TileType.tinyStones]
           },
           {
-            weight: 0.57,
+            weight: 0.05,
+            tileTypes: [TileType.shortGrass, TileType.smallBush]
+          },
+          {
+            weight: 0.05,
+            tileTypes: [TileType.shortGrass, TileType.mediumBush]
+          },
+          {
+            weight: 0.47,
             tileTypes: [TileType.shortGrass]
           }
         ])
@@ -182,7 +190,11 @@ export const CreateWorld = (): World => {
         WeightedTileGeneration([
           { weight: 0.1, tileTypes: [TileType.shortDryGrass, TileType.plant] },
           { weight: 0.2, tileTypes: [TileType.longDryGrass] },
-          { weight: 0.7, tileTypes: [TileType.shortDryGrass] }
+          {
+            weight: 0.1,
+            tileTypes: [TileType.shortDryGrass, TileType.sunflowers]
+          },
+          { weight: 0.6, tileTypes: [TileType.shortDryGrass] }
         ])
       } else if (tileType === TileType.sand) {
         WeightedTileGeneration([
