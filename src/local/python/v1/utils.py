@@ -82,9 +82,7 @@ def read_tile_meta(in_path: str) -> list[TileMetaIn]:
     
     return block_configs  
 
-
-
-def split_image(image: Image.Image, width: int, height: int) -> dict[str, Image.Image]:    
+def split_image_into_tiles(image: Image.Image, width: int, height: int) -> dict[str, Image.Image]:    
     # Get the original size of the image
     img_width, img_height = image.size
     
@@ -106,6 +104,29 @@ def split_image(image: Image.Image, width: int, height: int) -> dict[str, Image.
             block_img = extract_block_from_image(split_img)
             if not is_empty_image(block_img):
                 split_images[f"{math.floor(i/width)}_{math.floor(j/height)}"] = block_img
+    
+    return split_images
+
+def split_image_into_frames(image: Image.Image, width: int, height: int) -> dict[str, Image.Image]:    
+    # Get the original size of the image
+    img_width, img_height = image.size
+    
+    # Ensure the image can be split evenly
+    if img_width % width != 0 or img_height % height != 0:
+        raise ValueError("Image must have integer divisible width and height")
+    
+    # Create a list to store the split images
+    split_images: dict[str, Image.Image] = {}
+    
+    # Loop through the height of the image and create smaller images
+    for y in range(0, img_height, height):
+        for x in range(0, img_width, width):
+            # Define the box (left, upper, right, lower) to crop
+            box = (x, y, x + width, y + height)
+            split_img = image.crop(box)
+            block_img = extract_block_from_image(split_img)
+            if not is_empty_image(block_img):
+                split_images[f"{math.floor(x/width)}_{math.floor(y/height)}"] = block_img
     
     return split_images
 

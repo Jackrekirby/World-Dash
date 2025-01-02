@@ -1,6 +1,6 @@
 import { Pos2D, Pos3D } from '../miscellaneous/types'
-import { Renderer, RenderTile } from '../renderer/types'
-import { CreateRenderTile } from '../renderer/utils'
+import { Renderer, RenderTile, TileSet } from '../renderer/types'
+import { GetTileVariants } from '../renderer/utils'
 import { TileType, World, WorldTile } from '../world/types'
 import { Game } from './types'
 
@@ -35,18 +35,35 @@ export const Render = (
   // draw cursor
   const cursorWorldPosition = world.GetCursorWorldPosition()
   if (cursorWorldPosition !== null) {
-    const cursorTile: RenderTile = CreateRenderTile({
-      worldPosition: cursorWorldPosition,
-      tilename: 'cursor'
+    const variants = GetTileVariants({
+      name: 'cursor'
     })
+    const cursorTile: RenderTile = {
+      worldPosition: cursorWorldPosition,
+      tileIndex: variants[0].tilesetIndex,
+      tileset: TileSet.main
+    }
+    // const cursorTile: RenderTile = CreateRenderTile({
+    //   worldPosition: cursorWorldPosition,
+    //   tilename: 'cursor'
+    // })
 
     rTiles.push(cursorTile)
   }
   // draw player
-  const playerTile: RenderTile = CreateRenderTile({
-    worldPosition: game.playerPosition,
-    tilename: `sword_man:frame-${time % 1000 < 500 ? 0 : 1}`
+  const variants = GetTileVariants({
+    name: 'sword_man',
+    frame: [time % 1000 < 500 ? 0 : 1]
   })
+  const playerTile: RenderTile = {
+    worldPosition: game.playerPosition,
+    tileIndex: variants[0].tilesetIndex,
+    tileset: TileSet.main
+  }
+  //  CreateRenderTile({
+  //   worldPosition: game.playerPosition,
+  //   tilename: `sword_man:frame-${}`
+  // })
   rTiles.push(playerTile)
 
   // sort tiles for render (move into renderer)

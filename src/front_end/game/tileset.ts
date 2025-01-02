@@ -1,9 +1,8 @@
 import { SurfaceNoise } from '../miscellaneous/random_noise'
 import { warnOnce } from '../miscellaneous/single_log'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
-import { TILENAME_TO_TILESET_INDEX_MAP } from '../renderer/tileset'
-import { RenderTile } from '../renderer/types'
-import { CreateRenderTile } from '../renderer/utils'
+import { RenderTile, TileSet } from '../renderer/types'
+import { GetTileVariants } from '../renderer/utils'
 import { TileType, WorldTile } from '../world/types'
 import { DisplayMode, Game } from './types'
 
@@ -36,40 +35,6 @@ const worldToRenderMultiTileName: Map<TileType, string> = new Map([
   [TileType.palmTree, 'palm_tree']
 ])
 
-const GetTileVariant = ({
-  name,
-  p,
-  blockParts = [],
-  onlyParts = []
-}: {
-  name: string
-  p: Pos2D
-  blockParts?: string[]
-  onlyParts?: string[]
-}) => {
-  const n = SurfaceNoise(p)
-  const variants = Object.keys(TILENAME_TO_TILESET_INDEX_MAP).filter(key => {
-    const parts: string[] = key.split(':')
-    const hasBlockedParts: boolean = blockParts.some(blockPart =>
-      parts.some(part => part.startsWith(blockPart))
-    )
-    if (hasBlockedParts) return false
-
-    const hasOnlyParts: boolean = onlyParts.every(onlyPart =>
-      parts.some(part => part.startsWith(onlyPart))
-    )
-    if (!hasOnlyParts) return false
-    return parts[0] === name
-  })
-
-  if (variants.length === 0) {
-    throw new Error(`Cannot find variant ${name}`)
-  }
-
-  const chosenVariant = variants[Math.floor(variants.length * n)]
-  return chosenVariant
-}
-
 const GetAnimatedFrame = (
   framePeriods: number[],
   time: DOMHighResTimeStamp,
@@ -91,62 +56,6 @@ const GetAnimatedFrame = (
   return framePeriods.length - 1
 }
 
-const CreateMultiTileRenderTiles = ({
-  name,
-  worldPosition
-}: {
-  name: string
-  worldPosition: Pos3D
-}): RenderTile[] => {
-  const rTiles: RenderTile[] = []
-  const relTilePositions: Pos2D[] = Object.keys(TILENAME_TO_TILESET_INDEX_MAP)
-    .filter(key => {
-      const parts: string[] = key.split(':')
-      return parts[0] === name
-    })
-    .map(key => {
-      const parts: string[] = key.split(':')
-      const subpart = parts.find(part => part.startsWith('sub-'))
-      if (subpart === undefined) {
-        throw new Error(`Expected ${name} to be multiple tiles ${key}`)
-      }
-      const [x, y] = subpart.slice(4).split('_')
-      return { x: Number(x), y: Number(y) }
-    })
-
-  let maxP: Pos2D = { x: 0, y: 0 }
-  for (const p of relTilePositions) {
-    if (maxP.y < p.y) {
-      maxP.y = p.y
-    }
-    if (maxP.x < p.x) {
-      maxP.x = p.x
-    }
-  }
-
-  // assumes multi-tile has origin at horizontal centre
-  // and vertically at bottom
-  const xOffset = Math.floor(maxP.x / 2)
-  for (const p of relTilePositions) {
-    const subKey = `sub-${p.x}_${p.y}`
-    rTiles.push(
-      CreateRenderTile({
-        worldPosition: {
-          x: worldPosition.x + xOffset - p.x,
-          y: worldPosition.y - xOffset + p.x,
-          z: worldPosition.z + maxP.y - p.y - 1
-        },
-        tilename: GetTileVariant({
-          name,
-          p: worldPosition,
-          onlyParts: [subKey]
-        })
-      })
-    )
-  }
-  return rTiles
-}
-
 export const GenerateRenderTiles = ({
   worldTiles,
   time,
@@ -161,61 +70,83 @@ export const GenerateRenderTiles = ({
   for (const wTile of worldTiles) {
     if (worldToRenderTileName.has(wTile.tileType)) {
       const name = worldToRenderTileName.get(wTile.tileType) as string
-      rTiles.push(
-        CreateRenderTile({
-          worldPosition: wTile.p,
-          tilename: GetTileVariant({
-            name,
-            p: wTile.p,
-            blockParts: ['edge-']
-          })
-        })
-      )
+      const variants = GetTileVariants({ name })
+
+      const n = SurfaceNoise(wTile.p)
+      const variant = variants[Math.floor(variants.length * n)]
+
+      const rTile: RenderTile = {
+        worldPosition: wTile.p,
+        tileIndex: variant.tilesetIndex,
+        tileset: TileSet.main
+      }
+
+      rTiles.push(rTile)
     } else if (wTile.tileType === TileType.water) {
-      rTiles.push(
-        CreateRenderTile({
-          worldPosition: wTile.p,
-          tilename: `water:frame-${GetAnimatedFrame(
-            [8000, 8000, 8000],
-            time,
-            wTile.p
-          )}`
-        })
-      )
+      const frame: number = GetAnimatedFrame([8000, 8000, 8000], time, wTile.p)
+      const variants = GetTileVariants({ name: 'water', frame: [frame] })
+      const n = SurfaceNoise(wTile.p)
+      const variant = variants[Math.floor(variants.length * n)]
+      const rTile: RenderTile = {
+        worldPosition: wTile.p,
+        tileIndex: variant.tilesetIndex,
+        tileset: TileSet.main
+      }
+      rTiles.push(rTile)
     } else if (wTile.tileType === TileType.orchid) {
-      const frameKey = `frame-${GetAnimatedFrame([20000, 2000], time, wTile.p)}`
-      rTiles.push(
-        CreateRenderTile({
-          worldPosition: wTile.p,
-          tilename: GetTileVariant({
-            name: 'orchid',
-            p: wTile.p,
-            onlyParts: [frameKey]
-          })
-        })
-      )
+      const frame: number = GetAnimatedFrame([20000, 2000], time, wTile.p)
+      const variants = GetTileVariants({ name: 'orchid', frame: [frame] })
+      const n = SurfaceNoise(wTile.p)
+      const variant = variants[Math.floor(variants.length * n)]
+      const rTile: RenderTile = {
+        worldPosition: wTile.p,
+        tileIndex: variant.tilesetIndex,
+        tileset: TileSet.main
+      }
+      rTiles.push(rTile)
     } else if (
       wTile.tileType.split(':').some(part => part.startsWith('edge-'))
     ) {
-      const parts = wTile.tileType.split(':')
-      const edgeKey = parts.find(part => part.startsWith('edge-')) as string
-      rTiles.push(
-        CreateRenderTile({
-          worldPosition: wTile.p,
-          tilename: GetTileVariant({
-            name: parts[0],
-            p: wTile.p,
-            onlyParts: [edgeKey]
-          })
-        })
-      )
+      const name: string = wTile.tileType.replace(':', '_').replace('-', '_')
+      const variants = GetTileVariants({ name })
+      const n = SurfaceNoise(wTile.p)
+      const variant = variants[Math.floor(variants.length * n)]
+      const rTile: RenderTile = {
+        worldPosition: wTile.p,
+        tileIndex: variant.tilesetIndex,
+        tileset: TileSet.main
+      }
+      rTiles.push(rTile)
     } else if (worldToRenderMultiTileName.has(wTile.tileType)) {
-      rTiles.push(
-        ...CreateMultiTileRenderTiles({
-          name: worldToRenderMultiTileName.get(wTile.tileType) as string,
-          worldPosition: wTile.p
-        })
-      )
+      const name = worldToRenderMultiTileName.get(wTile.tileType) as string
+      const variants = GetTileVariants({ name })
+
+      let maxP: Pos2D = { x: 0, y: 0 }
+      for (const v of variants) {
+        if (maxP.y < v.worldOffset.y) {
+          maxP.y = v.worldOffset.y
+        }
+        if (maxP.x < v.worldOffset.x) {
+          maxP.x = v.worldOffset.x
+        }
+      }
+
+      // assumes multi-tile has origin at horizontal centre
+      // and vertically at bottom
+      const xOffset = Math.floor(maxP.x / 2)
+      for (const v of variants) {
+        const worldPosition = {
+          x: wTile.p.x + xOffset - v.worldOffset.x,
+          y: wTile.p.y - xOffset + v.worldOffset.x,
+          z: wTile.p.z + maxP.y - v.worldOffset.y - 1
+        }
+        const rTile: RenderTile = {
+          worldPosition,
+          tileIndex: v.tilesetIndex,
+          tileset: TileSet.main
+        }
+        rTiles.push(rTile)
+      }
     } else {
       warnOnce(
         `missing-tile-type-${wTile.tileType}`,
@@ -234,14 +165,14 @@ export const GenerateRenderTiles = ({
     for (const pStr of uniquePositions) {
       const [x, y, z] = pStr.split(' ').map(Number)
       const p: Pos3D = { x, y, z }
-      // console.log(rTile.worldPosition.z)
-      const variant = p.z < 0 ? 5 + (Math.floor(p.z) % 5) : Math.floor(p.z) % 5
-      debugTiles.push(
-        CreateRenderTile({
-          worldPosition: p,
-          tilename: `debug:mvar-${variant}`
-        })
-      )
+      const mvar = p.z < 0 ? 5 + (Math.floor(p.z) % 5) : Math.floor(p.z) % 5
+      const variants = GetTileVariants({ name: 'debug', mvar: [mvar] })
+      const rTile: RenderTile = {
+        worldPosition: p,
+        tileIndex: variants[0].tilesetIndex,
+        tileset: TileSet.main
+      }
+      debugTiles.push(rTile)
     }
 
     rTiles.push(...debugTiles)

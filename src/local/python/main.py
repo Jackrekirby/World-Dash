@@ -4,6 +4,7 @@ from pathlib import Path
 
 import v1.utils as utils
 from PIL import Image
+from v1.meta import export_tileset_meta
 from v1.structs import TileMetaIn, Tileset
 from v1.watch import watch_directory
 
@@ -28,10 +29,19 @@ def gen_left_right_flipped_variant(meta: TileMetaIn, image_variants: dict[str, I
         return 
     
     new_total_image_variants: dict[str, Image.Image] = {}
+
     for name, image in image_variants.items():
+        print(f' - var - {name}:rot-0')
+        new_total_image_variants[f'{name}:rot-0'] = image
+
         new_image_variant =  utils.create_left_right_flipped_image(image)
-        print(f' - var - {name}:lr_flip')
-        new_total_image_variants[f'{name}:lr_flip'] = new_image_variant
+        print(f' - var - {name}:rot-1')
+        new_total_image_variants[f'{name}:rot-1'] = new_image_variant
+
+    keys = list(image_variants.keys())
+    for k in keys:
+        print(f' - del lrflip - {k}')
+        del image_variants[k]
 
     image_variants.update(new_total_image_variants)
 
@@ -41,7 +51,7 @@ def gen_animated_variants(meta: TileMetaIn, image_variants: dict[str, Image.Imag
     
     new_total_image_variants: dict[str, Image.Image] = {}
     for name, image in image_variants.items():
-        new_image_variants = utils.split_image(image, width=tilesize, height=tilesize)
+        new_image_variants = utils.split_image_into_frames(image, width=tilesize, height=tilesize)
         for i, new_image_variant in enumerate(new_image_variants.values()):
             print(f' - var - {name}:frame-{i}')
             new_total_image_variants[f'{name}:frame-{i}'] = new_image_variant
@@ -59,7 +69,7 @@ def split_variants_into_tiles(meta: TileMetaIn, image_variants: dict[str, Image.
     
     new_total_image_variants: dict[str, Image.Image] = {}
     for name, image in image_variants.items():
-        new_image_variants = utils.split_image(image, width=tilesize, height=tilesize)
+        new_image_variants = utils.split_image_into_tiles(image, width=tilesize, height=tilesize)
         for variant_name, new_image_variant in new_image_variants.items():
             print(f' - var - {name}:sub-{variant_name}')
             new_total_image_variants[f'{name}:sub-{variant_name}'] = new_image_variant
@@ -168,6 +178,7 @@ def main():
 
     
     tileset: Tileset = utils.create_tileset(images)
+    export_tileset_meta(tileset)
     tileset.save('assets/tileset')
 
 def watch_callback(event):
