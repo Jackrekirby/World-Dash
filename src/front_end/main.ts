@@ -38,18 +38,27 @@ const main = async () => {
 
   let frameCount = 0
   let lastTime = performance.now()
+  let elapsedComputeTime = 0
 
   const RenderLoop = () => {
     requestAnimationFrame((time: DOMHighResTimeStamp) => {
+      const startTime = performance.now()
       frameCount++
 
       // Calculate elapsed time
       const elapsedTime = time - lastTime
       if (elapsedTime >= 2000) {
         const fps = (frameCount / elapsedTime) * 1000 // Frames per second
-        console.log(`Average FPS: ${fps.toFixed(2)}`)
+        const computeFps = fps * (elapsedTime / elapsedComputeTime)
+
+        console.log('FPS', {
+          average: fps.toFixed(2),
+          compute: computeFps.toFixed(2)
+        })
+
         frameCount = 0
         lastTime = time
+        elapsedComputeTime = 0
       }
 
       const rTiles: RenderTile[] = GenerateRenderTiles({
@@ -59,6 +68,8 @@ const main = async () => {
       })
       Render(time, renderer, world, rTiles, game)
       RenderLoop()
+      const endTime = performance.now()
+      elapsedComputeTime += endTime - startTime
     })
   }
 

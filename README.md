@@ -19,7 +19,7 @@ Isometric Assets (Modified)
 4. Add cliff tiles procedurally
 5. Add wall edge texture procedurally
 6. Add procedural block shadows
-7. Improve get tile variant performance via hashing
+7. X Improve get tile variant performance via hashing
 8. X Cursor cannot find surface of half tiles
 
 ### Isometric Functionality
