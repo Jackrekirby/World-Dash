@@ -21,6 +21,8 @@ Isometric Assets (Modified)
 6. Add procedural block shadows
 7. X Improve get tile variant performance via hashing
 8. X Cursor cannot find surface of half tiles
+9. X Viewport culling
+10. X Camera movement
 
 ### Isometric Functionality
 

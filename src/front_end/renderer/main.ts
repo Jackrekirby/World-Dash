@@ -1,4 +1,5 @@
 import { elements } from '../dom/elements'
+import { Pos2dScalarOperation } from '../miscellaneous/pos_2d'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { Renderer, RenderTile, TileSet } from './types'
 
@@ -151,7 +152,11 @@ export const CreateRenderer = async (): Promise<Renderer> => {
         (tile.worldPosition.z * _dts) / 2
     ]
 
-    const d = WorldToCanvasPosition(tile.worldPosition)
+    const d = Pos2dScalarOperation(
+      WorldToCanvasPosition(tile.worldPosition),
+      Math.floor
+    )
+
     const image: HTMLImageElement | undefined = tileSets.get(tile.tileset)
     if (image === undefined) {
       throw new Error(`Tileset undefined ${tile.tileset}`)
@@ -194,8 +199,8 @@ export const CreateRenderer = async (): Promise<Renderer> => {
     }
     // console.log(canvasPosition, p0)
     const p = {
-      x: (1 / _dts) * (p0.x - cx + 2 * (cy - p0.y)) + wz + 0.5,
-      y: (1 / _dts) * (cx - p0.x + 2 * (cy - p0.y)) + wz + 0.5,
+      x: (1 / _dts) * (p0.x - cx + 2 * (cy - p0.y)) + wz + 1,
+      y: (1 / _dts) * (cx - p0.x + 2 * (cy - p0.y)) + wz + 1,
       z: wz
     }
 

@@ -1,7 +1,5 @@
-import { CalculateCursorWorldPosition } from '../game/cursor'
 import { RandomisePlayerPosition } from '../game/main'
 import { DisplayMode, Game } from '../game/types'
-import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { Renderer } from '../renderer/types'
 import { World } from '../world/types'
 import { CyclicButtonManager } from './cyclicButtonManager'
@@ -38,22 +36,8 @@ export const InitialiseDom = (world: World, renderer: Renderer, game: Game) => {
     }
   })
 
-  elements.canvas.addEventListener('mousemove', (event: MouseEvent) => {
-    const rect = elements.canvas.getBoundingClientRect()
-    const canvasPosition: Pos2D = {
-      x: (event.offsetX / rect.width) * elements.canvas.width,
-      y: (event.offsetY / rect.height) * elements.canvas.height
-    }
-    const worldPosition: Pos3D | null = CalculateCursorWorldPosition(
-      renderer,
-      world,
-      canvasPosition
-    )
-    world.SetCursorWorldPosition(worldPosition)
-  })
-
   elements.randomiseWorld.onclick = () => {
-    world.GenerateTiles({ landAxialRadius: 6, worldAxialRadius: 12 })
+    world.GenerateTiles({ landAxialRadius: 24, worldAxialRadius: 32 })
     game.playerPosition = RandomisePlayerPosition(world)
   }
 }

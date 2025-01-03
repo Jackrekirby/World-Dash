@@ -1,7 +1,13 @@
+import { CreateKeyboard } from './dom/keyboard'
 import { InitialiseDom } from './dom/main'
+import { CreateMouse } from './dom/mouse'
+import { CreateCamera } from './game/camera'
+import { CalculateCursorWorldPosition } from './game/cursor'
 import { RandomisePlayerPosition, Render } from './game/main'
 import { GenerateRenderTiles } from './game/tileset'
 import { DisplayMode, Game } from './game/types'
+import { Pos3dZero } from './miscellaneous/pos_3d'
+import { Pos3D } from './miscellaneous/types'
 import { CreateRenderer } from './renderer/main'
 import { RenderTile } from './renderer/types'
 import { CreateWorld } from './world/main'
@@ -25,14 +31,18 @@ const TestWorld = (): WorldTile[] => {
 const main = async () => {
   const world = CreateWorld()
   // world.SetTiles(TestWorld())
-  world.GenerateTiles({ landAxialRadius: 6, worldAxialRadius: 12 })
+  world.GenerateTiles({ landAxialRadius: 24, worldAxialRadius: 32 })
 
   const renderer = await CreateRenderer()
   const game: Game = {
     showGrid: false,
     playerPosition: RandomisePlayerPosition(world),
-    displayMode: DisplayMode.Normal
+    displayMode: DisplayMode.Normal,
+    camera: CreateCamera({ acceleration: 1.5, maxSpeed: 20, friction: 0.08 }),
+    mouse: CreateMouse()
   }
+
+  const keyboard = CreateKeyboard()
 
   InitialiseDom(world, renderer, game)
 
@@ -40,8 +50,12 @@ const main = async () => {
   let lastTime = performance.now()
   let elapsedComputeTime = 0
 
-  const RenderLoop = () => {
+  const cameraMovementSpeed: number = 1
+
+  const RenderLoop = (previousTime: DOMHighResTimeStamp) => {
     requestAnimationFrame((time: DOMHighResTimeStamp) => {
+      const deltaTime = (time - previousTime) / 1000
+
       const startTime = performance.now()
       frameCount++
 
@@ -61,19 +75,49 @@ const main = async () => {
         elapsedComputeTime = 0
       }
 
+      const force = Pos3dZero()
+      if (keyboard.IsKeyPressed('W')) {
+        force.x -= cameraMovementSpeed
+      }
+      if (keyboard.IsKeyPressed('S')) {
+        force.x += cameraMovementSpeed
+      }
+      if (keyboard.IsKeyPressed('A')) {
+        force.y -= cameraMovementSpeed
+      }
+      if (keyboard.IsKeyPressed('D')) {
+        force.y += cameraMovementSpeed
+      }
+      if (keyboard.IsKeyPressed('C')) {
+        force.z -= cameraMovementSpeed
+      }
+      if (keyboard.IsKeyPressed(' ')) {
+        force.z += cameraMovementSpeed
+      }
+
+      game.camera.Update(deltaTime, force)
+
+      const worldPosition: Pos3D | null = CalculateCursorWorldPosition(
+        renderer,
+        world,
+        game
+      )
+
+      world.SetCursorWorldPosition(worldPosition)
+
       const rTiles: RenderTile[] = GenerateRenderTiles({
         worldTiles: world.GetTiles(),
         time,
         game
       })
       Render(time, renderer, world, rTiles, game)
-      RenderLoop()
       const endTime = performance.now()
       elapsedComputeTime += endTime - startTime
+      RenderLoop(time)
     })
   }
 
-  RenderLoop()
+  RenderLoop(performance.now())
 }
 
 main()

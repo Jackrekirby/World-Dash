@@ -1,3 +1,5 @@
+import { elements } from '../dom/elements'
+import { Pos3dSubtract } from '../miscellaneous/pos_3d'
 import { Pos2D, Pos3D } from '../miscellaneous/types'
 import { Renderer, RenderTile, TileSet } from '../renderer/types'
 import { GetTileVariants } from '../renderer/utils'
@@ -19,6 +21,54 @@ export const RandomisePlayerPosition = (world: World): Pos3D => {
   return { x: 0, y: 0, z: 0 }
 }
 
+const GetWorldViewPort = (renderer: Renderer, game: Game): Pos2D => {
+  const cp = game.camera.GetPosition()
+  const [w, h] = [elements.canvas.width, elements.canvas.height]
+  const p = renderer.CanvasToWorldPosition({
+    canvasPosition: { x: 0, y: 0 },
+    wz: 0
+  })
+  // the distance from the centre
+  return { x: -(p.y - p.x) + 2, y: -(p.x + p.y) + 4 }
+}
+
+const FilterTilesOutsideViewport = (
+  renderer: Renderer,
+  game: Game,
+  rtiles: RenderTile[]
+) => {
+  const viewport: Pos2D = GetWorldViewPort(renderer, game)
+  return rtiles.filter(rtile => {
+    const worldPosition = Pos3dSubtract(
+      rtile.worldPosition,
+      game.camera.GetPosition()
+    )
+
+    const flatWorldPosition: Pos2D = {
+      x: worldPosition.x - worldPosition.z,
+      y: worldPosition.y - worldPosition.z
+    }
+
+    // left (-x, y)
+    if (flatWorldPosition.y - flatWorldPosition.x > viewport.x) {
+      return false
+    }
+    // right (x, -y)
+    if (flatWorldPosition.y - flatWorldPosition.x < -viewport.x) {
+      return false
+    }
+    // top (-x, -y)
+    if (flatWorldPosition.y + flatWorldPosition.x < -viewport.y) {
+      return false
+    }
+    // bottom (+x, +y)
+    if (flatWorldPosition.y + flatWorldPosition.x > viewport.y) {
+      return false
+    }
+    return true
+  })
+}
+
 export const Render = (
   time: DOMHighResTimeStamp,
   renderer: Renderer,
@@ -30,7 +80,7 @@ export const Render = (
   renderer.FillCanvas('hsl(204, 78%, 85%)')
 
   // draw tiles
-  const rTiles: RenderTile[] = [...tiles]
+  const rTiles: RenderTile[] = FilterTilesOutsideViewport(renderer, game, tiles)
 
   // draw cursor
   const cursorWorldPosition = world.GetCursorWorldPosition()
@@ -43,13 +93,10 @@ export const Render = (
       tileIndex: variants[0].tilesetIndex,
       tileset: TileSet.main
     }
-    // const cursorTile: RenderTile = CreateRenderTile({
-    //   worldPosition: cursorWorldPosition,
-    //   tilename: 'cursor'
-    // })
 
     rTiles.push(cursorTile)
   }
+
   // draw player
   const variants = GetTileVariants({
     name: 'sword_man',
@@ -60,10 +107,6 @@ export const Render = (
     tileIndex: variants[0].tilesetIndex,
     tileset: TileSet.main
   }
-  //  CreateRenderTile({
-  //   worldPosition: game.playerPosition,
-  //   tilename: `sword_man:frame-${}`
-  // })
   rTiles.push(playerTile)
 
   // sort tiles for render (move into renderer)
@@ -79,7 +122,16 @@ export const Render = (
   })
 
   for (const t of rTiles) {
-    renderer.DrawIsometricTile(t)
+    const worldPosition = Pos3dSubtract(
+      t.worldPosition,
+      game.camera.GetPosition()
+    )
+
+    renderer.DrawIsometricTile({
+      worldPosition,
+      tileIndex: t.tileIndex,
+      tileset: t.tileset
+    })
   }
 
   // draw grid

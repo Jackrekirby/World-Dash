@@ -2,7 +2,7 @@ import { Pos2D } from './types'
 
 export const CreateRandomNoise2D = (): ((p: Pos2D) => number) => {
   const values: number[] = []
-  const n = 13
+  const n = 64
   for (let y = -n; y < n; y++) {
     for (let x = -n; x < n; x++) {
       values.push(Math.random())
